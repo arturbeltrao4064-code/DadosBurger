@@ -3,9 +3,8 @@
 #include <string>
 #include <algorithm>
 
-NoAVL::NoAVL(int cod, const std::string& str) : 
-    codigo(cod), 
-    nome(str), 
+NoAVL::NoAVL(PRODUTO p) : 
+    prod(p), 
     esq(nullptr),
     dir(nullptr),
     altura(0) {}
@@ -85,3 +84,5 @@ NoAVL *Balancear(NoAVL *no){
 
     return no;
 }
+
+// falta inserir e buscar
