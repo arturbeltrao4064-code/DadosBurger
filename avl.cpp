@@ -85,4 +85,35 @@ NoAVL *Balancear(NoAVL *no){
     return no;
 }
 
-// falta inserir e buscar
+NoAVL *Inserir(NoAVL *no, PRODUTO p){
+    if(no == nullptr){
+    return new NoAVL(p);
+    }
+
+    if(no->prod.cod < p.cod){
+        no->dir = inserir(no->esq, p);
+    }
+
+    else if(no->prod.cod > p.cod){
+        no->esq = inserir(no->dir, p);
+    }
+    else{
+        return no;
+    }
+    AtualizaAlturaNodo(no);
+    return Balancear(no);
+}   
+
+NoAVL *Buscar(NoAVL *no, PRODUTO p){
+    if(no == nullptr || no->prod.cod == p.cod){
+        return no;
+    }
+
+    if(no->prod.cod < p.cod){
+        return Buscar(no->dir, p);
+    }
+
+    if(no->prod.cod > p.cod){
+        return Buscar(no->esq, p);
+    }
+}
