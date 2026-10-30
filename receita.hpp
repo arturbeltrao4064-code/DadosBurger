@@ -4,7 +4,7 @@
 
 struct Produto{
     int cod;
-    char nome[50];
+    std::string nome;
     float preco;
 };
 
