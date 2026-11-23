@@ -10,7 +10,7 @@ bool estaVazia(FilaEnc& f) {
     return f.frente == nullptr;
 }
 
-bool enfileira(FilaEnc& f, Produto valor) {
+bool enfileira(FilaEnc& f, Pedido valor) {
     Nodo *novo = new Nodo;
     if (novo == nullptr)
         return false;
@@ -27,7 +27,7 @@ bool enfileira(FilaEnc& f, Produto valor) {
     return true;
 }
 
-bool desenfileira(FilaEnc& f, Produto *valorRemovido) {
+bool desenfileira(FilaEnc& f, Pedido *valorRemovido) {
     Nodo *removido;
 
     if (estaVazia(f)) // underflow
