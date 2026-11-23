@@ -10,6 +10,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(dado_burger
     src/main.cpp
+    src/partida.cpp
+    src/carregar_partida.cpp
+    src/salvar_partida.cpp
     src/avl.cpp
     src/cache.cpp
     src/fila.cpp
@@ -24,6 +27,7 @@ add_executable(dado_burger
 target_include_directories(dado_burger PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
 
 if(MSVC)
     target_compile_options(dado_burger PRIVATE /W4)
