@@ -1,11 +1,20 @@
 #ifndef MONTAGEM_HPP
 #define MONTAGEM_HPP
 #include <iostream>
+#include "pereciveis.hpp"
 
 struct Produto{
     int cod;
     std::string nome;
     float preco;
+};
+
+struct Estoque{
+    heap pereciveis;
+    int queijo_suico;
+    int cheddar;
+    int cebola;
+    int tomate;
 };
 
 struct Nodo {

@@ -3,7 +3,7 @@
 #include <string>
 #include <algorithm>
 
-NoAVL::NoAVL(Produto p) : 
+NoAVL::NoAVL(Pedido p) : 
     prod(p), 
     esq(nullptr),
     dir(nullptr),
@@ -85,7 +85,7 @@ NoAVL *Balancear(NoAVL *no){
     return no;
 }
 
-NoAVL *Inserir(NoAVL *no, Produto p){
+NoAVL *Inserir(NoAVL *no, Pedido p){
     if(no == nullptr){
     return new NoAVL(p);
     }
@@ -104,7 +104,7 @@ NoAVL *Inserir(NoAVL *no, Produto p){
     return Balancear(no);
 }   
 
-NoAVL *Buscar(NoAVL *no, Produto p){
+ NoAVL *Buscar(NoAVL *no, Pedido p){
     if(no == nullptr || no->prod.cod == p.cod){
         return no;
     }
