@@ -1,50 +1,124 @@
+
 #include "pereciveis.hpp"
+#include <new>
+#include <utility>
 
-void heapify(heap& a, int ativos, int i){
-    int menor = i;
-    int esq = 2*i + 1;
-    int dir = 2*i + 1;
+void inicializarHeap(heap &a, char comida, int capacidade,
+                     int validadeConfig)
+{
+    a.comida = comida;
+    a.tamanho = 0;
+    a.capacidade = capacidade > 0 ? capacidade : 1;
+    a.turno_preparo = 0;
+    a.validade_config = validadeConfig;
 
-    if(esq < ativos && a.vetor[esq].turno_validade < a.vetor[menor].turno_validade) menor = esq;
-    if(dir < ativos && a.vetor[dir].turno_validade < a.vetor[menor].turno_validade) menor = dir;
+    a.vetor = new (std::nothrow) ingrediente[a.capacidade];
 
-    if(menor != i){
-        ingrediente tmp = a.vetor[i];
-        a.vetor[i] = a.vetor[menor];
-        a.vetor[menor] = tmp;
-        heapify(a, ativos, menor);
-    }
-};
+    if (a.vetor == nullptr)
+        a.capacidade = 0;
+}
 
-void siftUp(heap& a, int i) {
-    while (i > 0) {
+bool estaVazio(const heap &a)
+{
+    return a.tamanho == 0;
+}
+
+void siftUp(heap &a, int i)
+{
+    while (i > 0)
+    {
         int pai = (i - 1) / 2;
-        if (a.vetor[i].turno_validade < a.vetor[pai].turno_validade) {
-            ingrediente tmp = a.vetor[i];
-            a.vetor[i].turno_validade = a.vetor[pai].turno_validade;
-            a.vetor[pai] = tmp;
+
+        if (a.vetor[i].turno_validade <
+            a.vetor[pai].turno_validade)
+        {
+            std::swap(a.vetor[i], a.vetor[pai]);
             i = pai;
-        } else {
+        }
+        else
+        {
             break;
         }
     }
-};
+}
 
-void inserir(heap& a, int ativos, ingrediente& novo){
-    a.vetor[ativos] = novo;
-    a.vetor[ativos].turno_validade = a.turno_preparo + a.validade_config;
-    siftUp(a, ativos);
-};
+void heapify(heap &a, int i)
+{
+    int menor = i;
+    int esq = 2 * i + 1;
+    int dir = 2 * i + 2;
 
-ingrediente remover_min(heap& a, int ativos){
-    ingrediente min = a.vetor[0];
-    a.vetor[0] = a.vetor[ativos];
-    ativos--;
-    heapify(a, ativos, 0);
-};
-
-void buildHeap(heap& a, int ativos){
-    for(int i = ativos/2 - 1; i >= 0; i--){
-        heapify(a, ativos, i);
+    if (esq < a.tamanho &&
+        a.vetor[esq].turno_validade <
+            a.vetor[menor].turno_validade)
+    {
+        menor = esq;
     }
-};
+
+    if (dir < a.tamanho &&
+        a.vetor[dir].turno_validade <
+            a.vetor[menor].turno_validade)
+    {
+        menor = dir;
+    }
+
+    if (menor != i)
+    {
+        std::swap(a.vetor[i], a.vetor[menor]);
+        heapify(a, menor);
+    }
+}
+
+bool inserir(heap &a, const ingrediente &novo)
+{
+    if (a.vetor == nullptr || a.tamanho >= a.capacidade)
+        return false;
+
+    a.vetor[a.tamanho] = novo;
+
+    siftUp(a, a.tamanho);
+
+    a.tamanho++;
+
+    return true;
+}
+
+ingrediente remover_min(heap &a)
+{
+    ingrediente vazio = {-1};
+
+    if (estaVazio(a))
+        return vazio;
+
+    ingrediente menor = a.vetor[0];
+
+    a.tamanho--;
+
+    if (a.tamanho > 0)
+    {
+        a.vetor[0] = a.vetor[a.tamanho];
+        heapify(a, 0);
+    }
+
+    return menor;
+}
+
+void buildHeap(heap &a)
+{
+    for (int i = a.tamanho / 2 - 1; i >= 0; i--)
+    {
+        heapify(a, i);
+    }
+}
+
+void destruirHeap(heap &a)
+{
+    delete[] a.vetor;
+
+    a.vetor = nullptr;
+    a.tamanho = 0;
+    a.capacidade = 0;
+    a.turno_preparo = 0;
+    a.validade_config = 0;
+    a.comida = '\0';
+}

@@ -9,6 +9,7 @@
 #include "pereciveis.hpp"
 #include "receita.hpp"
 #include "timer.hpp"
+#include "arquivos.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -19,12 +20,19 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    std::ifstream arquivoPedidos(argv[1]);
-    if (!arquivoPedidos.is_open()) {
-        std::cerr << "Erro ao abrir o arquivo de pedidos: "
-                  << argv[1] << '\n';
-        return 1;
-    }
+    NoAVL* raiz = nullptr;
+    raiz = carregarPedidos(argv[1], raiz);
+
+    for (int i = 1; i <= 15; i++)
+{
+    NoAVL* encontrado = Buscar(raiz, i);
+
+    if (encontrado != nullptr)
+        std::cout << "Pedido " << i << ": "
+                  << encontrado->prod.nome << '\n';
+    else
+        std::cout << "Pedido " << i << " nao encontrado!\n";
+}
 
     std::ifstream arquivoHistorico(argv[2]);
     if (!arquivoHistorico.is_open()) {
@@ -32,6 +40,29 @@ int main(int argc, char* argv[])
                   << argv[2] << '\n';
         return 1;
     }
+
+    // Inicializa a lista contígua
+    ListaContDin historico;
+    inicializar(historico);
+
+    // Carrega os registros do arquivo
+    if (!carregarHistorico(arquivoHistorico, historico))
+    {
+        std::cerr << "Erro ao carregar o histórico.\n";
+        destruir(historico);
+        return 1;
+    }
+
+    if (!carregarHistorico(arquivoHistorico, historico))
+{
+    std::cerr << "Erro ao carregar o histórico.\n";
+    destruir(historico);
+    return 1;
+}
+
+
+
+        
 
     // --- Sua parte (loop principal do menu) ---
     int estado = 0;

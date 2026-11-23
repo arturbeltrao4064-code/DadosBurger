@@ -1,26 +1,30 @@
+
 #ifndef FILA_HPP
 #define FILA_HPP
 
-struct Produto{
+#include <string>
+
+struct ProdutoFila {
     int cod;
     std::string nome;
     float preco;
+    int paciencia;
 };
 
-struct Nodo {
-    Nodo *prox;
-    Produto dado;
+struct NoFila {
+    NoFila *prox;
+    ProdutoFila dado;
 };
 
-struct FilaEnc{
-    Nodo *frente;
-    Nodo *final;
+struct FilaEnc {
+    NoFila *frente;
+    NoFila *final;
 };
 
 void inicializa(FilaEnc& f);
-bool estaVazia(FilaEnc& f);
-bool enfileira(FilaEnc& f, Produto valor);
-int  desenfileira(FilaEnc& f, Produto &valorRemovido);
-int  tamanho(FilaEnc& f);
+bool estaVazia(const FilaEnc& f);
+bool enfileira(FilaEnc& f, const ProdutoFila& valor);
+bool desenfileira(FilaEnc& f, ProdutoFila& valorRemovido);
+int tamanho(const FilaEnc& f);
 
 #endif

@@ -37,4 +37,6 @@ NoAVL* Balancear(NoAVL *no);
 NoAVL* Inserir(NoAVL *no, Produto p);
 NoAVL* Buscar(NoAVL *no, int codigo);
 
+extern int totalrotacoes;
+
 #endif
