@@ -1,10 +1,9 @@
 #ifndef PARTIDA_HPP
 #define PARTIDA_HPP
 
-#include <fstream>
+#define CLIENTES 10
 #include "fila.hpp"
 #include "montagem.hpp"
-#include "pereciveis.hpp"
 #include "cache.hpp"
 #include "avl.hpp"
 #include <cstdlib>
