@@ -1,9 +1,10 @@
+
 #ifndef MONTAGEM_HPP
 #define MONTAGEM_HPP
-#include <iostream>
 #include "pereciveis.hpp"
+#include <string>
 
-struct Produto{
+struct IngredientePilha {
     int cod;
     std::string nome;
     float preco;
@@ -17,20 +18,20 @@ struct Estoque{
     int tomate;
 };
 
-struct Nodo {
-    Nodo *prox;
-    Produto dado;
+struct NoPilha {
+    NoPilha *prox;
+    IngredientePilha dado;
 };
 
-struct PilhaEnc{
-    Nodo *topo;
+struct PilhaEnc {
+    NoPilha *topo;
 };
 
 void inicializa(PilhaEnc& p);
-bool estaVazia(PilhaEnc& p);
-bool empilha(PilhaEnc& p, Produto valor);
-bool desempilha(PilhaEnc& p, Produto& valorRemovido);
-bool topo(PilhaEnc& p, Produto& valor);
-int  tamanho(PilhaEnc& p);
+bool estaVazia(const PilhaEnc& p);
+bool empilha(PilhaEnc& p, const IngredientePilha& valor);
+bool desempilha(PilhaEnc& p, IngredientePilha& valorRemovido);
+bool topo(const PilhaEnc& p, IngredientePilha& valor);
+int tamanho(const PilhaEnc& p);
 
 #endif

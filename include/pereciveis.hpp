@@ -1,20 +1,29 @@
+
 #ifndef PERECIVEIS_HPP
 #define PERECIVEIS_HPP
 
-struct ingrediente{
+struct ingrediente {
     int turno_validade;
 };
 
-struct heap{
+struct heap {
     char comida;
     ingrediente *vetor;
+    int tamanho;
+    int capacidade;
     int turno_preparo;
     int validade_config;
 };
 
-void heapify(heap& a, int ativos, int i);
-void siftUp(heap& a, int i);
-void inserir(heap& a, int ativos, ingrediente& novo);
+void inicializarHeap(heap& a, char comida, int capacidade,
+                     int validadeConfig);
+
+bool estaVazio(const heap& a);
+bool inserir(heap& a, const ingrediente& novo);
 ingrediente remover_min(heap& a);
-void buildHeap(heap& a, int ativos);
+void heapify(heap& a, int i);
+void siftUp(heap& a, int i);
+void buildHeap(heap& a);
+void destruirHeap(heap& a);
+
 #endif

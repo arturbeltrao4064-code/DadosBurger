@@ -11,7 +11,7 @@ struct Pedido {
 };
 
 struct NoAVL {
-    Pedido prod; 
+    Pedido prod;
 
     NoAVL *esq;
     NoAVL *dir;
@@ -35,6 +35,8 @@ NoAVL* RL(NoAVL *no);
 // Balanceamento, inserção e busca
 NoAVL* Balancear(NoAVL *no);
 NoAVL* Inserir(NoAVL *no, Pedido p);
-NoAVL* Buscar(const NoAVL *no, int codigo);
+const NoAVL* Buscar(const NoAVL *no, int codigo);
+
+extern int totalrotacoes;
 
 #endif

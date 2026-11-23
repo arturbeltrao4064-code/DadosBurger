@@ -3,8 +3,10 @@
 #include <string>
 #include <algorithm>
 
-NoAVL::NoAVL(Pedido p) : 
-    prod(p), 
+int totalrotacoes = 0;
+
+NoAVL::NoAVL(Pedido p) :
+    prod(p),
     esq(nullptr),
     dir(nullptr),
     altura(0) {}
@@ -30,6 +32,8 @@ NoAVL *R(NoAVL *no){
     AtualizaAlturaNodo(no);
     AtualizaAlturaNodo(b);
 
+    totalrotacoes++;
+
     return b;
 }
 
@@ -42,6 +46,8 @@ NoAVL *L(NoAVL *no){
 
     AtualizaAlturaNodo(no);
     AtualizaAlturaNodo(b);
+
+    totalrotacoes++;
 
     return b;
 }
@@ -85,35 +91,32 @@ NoAVL *Balancear(NoAVL *no){
     return no;
 }
 
-NoAVL *Inserir(NoAVL *no, Pedido p){
-    if(no == nullptr){
-    return new NoAVL(p);
+NoAVL* Inserir(NoAVL *no, Pedido p) {
+    if (no == nullptr) {
+        return new NoAVL(p);
     }
 
-    if(no->prod.cod < p.cod){
-        no->dir = Inserir(no->esq, p);
+    if (p.cod < no->prod.cod) {
+        no->esq = Inserir(no->esq, p);
+    }
+    else if (p.cod > no->prod.cod) {
+        no->dir = Inserir(no->dir, p);
+    }
+    else {
+        return no; // Código já existente
     }
 
-    else if(no->prod.cod > p.cod){
-        no->esq = Inserir(no->dir, p);
-    }
-    else{
-        return no;
-    }
-    AtualizaAlturaNodo(no);
     return Balancear(no);
-}   
+}
 
- NoAVL *Buscar(NoAVL *no, Pedido p){
-    if(no == nullptr || no->prod.cod == p.cod){
+const NoAVL* Buscar(const NoAVL *no, int codigo){
+    if(no == nullptr || no->prod.cod == codigo){
         return no;
     }
 
-    if(no->prod.cod < p.cod){
-        return Buscar(no->dir, p);
+    if(no->prod.cod > codigo){
+        return Buscar(no->esq, codigo);
     }
 
-    if(no->prod.cod > p.cod){
-        return Buscar(no->esq, p);
-    }
+    return Buscar(no->dir, codigo);
 }

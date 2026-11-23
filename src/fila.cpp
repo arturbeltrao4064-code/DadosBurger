@@ -1,4 +1,5 @@
-#include <iostream>
+
+#include <new>
 #include "fila.hpp"
 
 void inicializa(FilaEnc& f) {
@@ -6,12 +7,12 @@ void inicializa(FilaEnc& f) {
     f.final = nullptr;
 }
 
-bool estaVazia(FilaEnc& f) {
+bool estaVazia(const FilaEnc& f) {
     return f.frente == nullptr;
 }
 
-bool enfileira(FilaEnc& f, Pedido valor) {
-    Nodo *novo = new Nodo;
+bool enfileira(FilaEnc& f, const Pedido& valor) {
+    NoFila *novo = new (std::nothrow) NoFila;
     if (novo == nullptr)
         return false;
 
@@ -19,33 +20,31 @@ bool enfileira(FilaEnc& f, Pedido valor) {
     novo->prox = nullptr;
 
     if (f.final != nullptr)
-        f.final->prox = novo; // o antigo final passa a apontar para o novo nodo
+        f.final->prox = novo;
     else
-        f.frente = novo;      // fila estava vazia: novo nodo também é a frente
+        f.frente = novo;
 
     f.final = novo;
     return true;
 }
 
-bool desenfileira(FilaEnc& f, Pedido *valorRemovido) {
-    Nodo *removido;
-
-    if (estaVazia(f)) // underflow
+bool desenfileira(FilaEnc& f, Pedido& valorRemovido) {
+    if (estaVazia(f))
         return false;
 
-    removido = f.frente;
-    *valorRemovido = removido->dado;
+    NoFila *removido = f.frente;
+    valorRemovido = removido->dado;
     f.frente = removido->prox;
 
-    if (f.frente == nullptr) // a fila ficou vazia
+    if (f.frente == nullptr)
         f.final = nullptr;
 
     delete removido;
     return true;
 }
 
-int tamanho(FilaEnc& f) {
-    Nodo *aux = f.frente;
+int tamanho(const FilaEnc& f) {
+    const NoFila *aux = f.frente;
     int contador = 0;
 
     while (aux != nullptr) {

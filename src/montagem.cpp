@@ -1,48 +1,54 @@
-#include <iostream>
+
+#include <new>
 #include "montagem.hpp"
 
 void inicializa(PilhaEnc& p) {
     p.topo = nullptr;
 }
 
-bool estaVazia(PilhaEnc& p) {
+bool estaVazia(const PilhaEnc& p) {
     return p.topo == nullptr;
 }
 
-bool empilha(PilhaEnc& p, Produto valor) {
-    Nodo *novo = new Nodo;
+bool empilha(PilhaEnc& p, const IngredientePilha& valor) {
+    NoPilha *novo = new (std::nothrow) NoPilha;
+
     if (novo == nullptr)
         return false;
 
     novo->dado = valor;
-    novo->prox = p.topo; // aponta para o antigo topo
-    p.topo = novo;        // o novo nodo passa a ser o topo
+    novo->prox = p.topo;
+
+    p.topo = novo;
+
     return true;
 }
 
-bool desempilha(PilhaEnc& p, Produto *valorRemovido) {
-    Nodo *removido;
-
-    if (estaVazia(p)) // underflow
-        return false;
-
-    removido = p.topo;
-    *valorRemovido = removido->dado;
-    p.topo = removido->prox;
-    delete removido;
-    return true;
-}
-
-bool topo(PilhaEnc& p, Produto *valor) {
+bool desempilha(PilhaEnc& p, IngredientePilha& valorRemovido) {
     if (estaVazia(p))
         return false;
 
-    *valor = p.topo->dado;
+    NoPilha *removido = p.topo;
+
+    valorRemovido = removido->dado;
+    p.topo = removido->prox;
+
+    delete removido;
+
     return true;
 }
 
-int tamanho(PilhaEnc& p) {
-    Nodo *aux = p.topo;
+bool topo(const PilhaEnc& p, IngredientePilha& valor) {
+    if (estaVazia(p))
+        return false;
+
+    valor = p.topo->dado;
+
+    return true;
+}
+
+int tamanho(const PilhaEnc& p) {
+    const NoPilha *aux = p.topo;
     int contador = 0;
 
     while (aux != nullptr) {

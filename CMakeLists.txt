@@ -18,6 +18,7 @@ add_executable(dado_burger
     src/pereciveis.cpp
     src/receita.cpp
     src/timer.cpp
+    src/arquivos.cpp
 )
 
 target_include_directories(dado_burger PRIVATE

@@ -9,6 +9,7 @@
 #include "pereciveis.hpp"
 #include "receita.hpp"
 #include "timer.hpp"
+#include "arquivos.hpp"
 #include <cstdlib>
 #include <ctime>
 
@@ -22,12 +23,19 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    std::ifstream arquivoPedidos(argv[1]);
-    if (!arquivoPedidos.is_open()) {
-        std::cerr << "Erro ao abrir o arquivo de pedidos: "
-                  << argv[1] << '\n';
-        return 1;
-    }
+    NoAVL* raiz = nullptr;
+    raiz = carregarPedidos(argv[1], raiz);
+
+    for (int i = 1; i <= 15; i++)
+{
+    const NoAVL* encontrado = Buscar(raiz, i);
+
+    if (encontrado != nullptr)
+        std::cout << "Pedido " << i << ": "
+                  << encontrado->prod.nome << '\n';
+    else
+        std::cout << "Pedido " << i << " nao encontrado!\n";
+}
 
     std::ifstream arquivoHistorico(argv[2]);
     if (!arquivoHistorico.is_open()) {
@@ -36,9 +44,20 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    // Inicializa a lista contígua
+    ListaContDin historico;
+    inicializar(historico);
+
+    // Carrega os registros do arquivo
+    if (!carregarHistorico(arquivoHistorico, historico))
+    {
+        std::cerr << "Erro ao carregar o histórico.\n";
+        destruir(historico);
+        return 1;
+    }
+
     // --- Sua parte (loop principal do menu) ---
     int estado = 0;
-    int maiorId;
 
     while (estado == 0 || estado == 1 || estado == 2 || estado == 3)
     {
@@ -49,7 +68,7 @@ int main(int argc, char* argv[])
         }
         if (estado == 1)
         {
-            
+
         }
         if (estado == 2)
         {
@@ -73,13 +92,13 @@ int main(int argc, char* argv[])
         }
         if (estado == 67)
         {
-            std::cout << R"(.d8888b.       8888888888P 
-       d88P  Y88b            d88P  
-       888                  d88P   
-       888d888b.           d88P    
-       888P "Y88b         d88P     
-       888    888        d88P      
-       Y88b  d88P       d88P       
+            std::cout << R"(.d8888b.       8888888888P
+       d88P  Y88b            d88P
+       888                  d88P
+       888d888b.           d88P
+       888P "Y88b         d88P
+       888    888        d88P
+       Y88b  d88P       d88P
         "Y8888P"       d88P)";
         }
     }

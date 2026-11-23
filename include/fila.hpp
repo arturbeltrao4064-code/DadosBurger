@@ -1,22 +1,24 @@
 #ifndef FILA_HPP
 #define FILA_HPP
-#define CLIENTES 10
+
 #include "avl.hpp"
 
-struct Nodo {
-    Nodo *prox;
+constexpr int CLIENTES = 10;
+
+struct NoFila {
+    NoFila *prox;
     Pedido dado;
 };
 
-struct FilaEnc{
-    Nodo *frente;
-    Nodo *final;
+struct FilaEnc {
+    NoFila *frente;
+    NoFila *final;
 };
 
 void inicializa(FilaEnc& f);
-bool estaVazia(FilaEnc& f);
-bool enfileira(FilaEnc& f, Pedido valor);
-int  desenfileira(FilaEnc& f, Pedido &valorRemovido);
-int  tamanho(FilaEnc& f);
+bool estaVazia(const FilaEnc& f);
+bool enfileira(FilaEnc& f, const Pedido& valor);
+bool desenfileira(FilaEnc& f, Pedido& valorRemovido);
+int tamanho(const FilaEnc& f);
 
 #endif

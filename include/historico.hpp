@@ -1,6 +1,6 @@
 #ifndef HISTORICO_HPP
 #define HISTORICO_HPP
-#include <iostream>
+#include <string>
 
 struct PARTIDA{
     std::string nome_jogador;
@@ -18,7 +18,7 @@ int conta_tamanho(const ListaContDin& l);
 PARTIDA acessar(const ListaContDin& l, int pos);
 bool inserir(ListaContDin& l, PARTIDA novo, int pos);
 bool remover(ListaContDin& l, int pos);
-int buscar(ListaContDin& l, std::string nome);
+int buscar(const ListaContDin& l, const std::string nome);
 void destruir(ListaContDin& l);
 
 #endif
