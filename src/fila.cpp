@@ -11,9 +11,8 @@ bool estaVazia(const FilaEnc& f) {
     return f.frente == nullptr;
 }
 
-bool enfileira(FilaEnc& f, const ProdutoFila& valor) {
+bool enfileira(FilaEnc& f, const Pedido& valor) {
     NoFila *novo = new (std::nothrow) NoFila;
-
     if (novo == nullptr)
         return false;
 
@@ -29,7 +28,7 @@ bool enfileira(FilaEnc& f, const ProdutoFila& valor) {
     return true;
 }
 
-bool desenfileira(FilaEnc& f, ProdutoFila& valorRemovido) {
+bool desenfileira(FilaEnc& f, Pedido& valorRemovido) {
     if (estaVazia(f))
         return false;
 

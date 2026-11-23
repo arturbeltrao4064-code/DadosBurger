@@ -5,20 +5,20 @@
 #include <string>
 
 
-struct Produto {
+struct Pedido {
     int cod;
     std::string nome;
 };
 
 struct NoAVL {
-    Produto prod; 
+    Pedido prod;
 
     NoAVL *esq;
     NoAVL *dir;
 
     int altura;
 
-    NoAVL(Produto p);
+    NoAVL(Pedido p);
 };
 
 // Altura e fator de balanceamento
@@ -34,8 +34,8 @@ NoAVL* RL(NoAVL *no);
 
 // Balanceamento, inserção e busca
 NoAVL* Balancear(NoAVL *no);
-NoAVL* Inserir(NoAVL *no, Produto p);
-NoAVL* Buscar(NoAVL *no, int codigo);
+NoAVL* Inserir(NoAVL *no, Pedido p);
+const NoAVL* Buscar(const NoAVL *no, int codigo);
 
 extern int totalrotacoes;
 

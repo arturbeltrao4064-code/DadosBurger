@@ -3,12 +3,12 @@
 
 int main() {
     FilaEnc fila;
-    ProdutoFila p;
+    Pedido p;
 
     inicializa(fila);
 
-    ProdutoFila p1 = {1, "Pao", 2.0};
-    ProdutoFila p2 = {2, "Queijo", 3.0};
+    Pedido p1 = {1, "Pao"};
+    Pedido p2 = {2, "Queijo"};
 
     enfileira(fila, p1);
     enfileira(fila, p2);

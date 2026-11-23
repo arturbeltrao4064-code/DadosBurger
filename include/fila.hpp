@@ -1,19 +1,13 @@
-
 #ifndef FILA_HPP
 #define FILA_HPP
 
-#include <string>
+#include "avl.hpp"
 
-struct ProdutoFila {
-    int cod;
-    std::string nome;
-    float preco;
-    int paciencia;
-};
+constexpr int CLIENTES = 10;
 
 struct NoFila {
     NoFila *prox;
-    ProdutoFila dado;
+    Pedido dado;
 };
 
 struct FilaEnc {
@@ -23,8 +17,8 @@ struct FilaEnc {
 
 void inicializa(FilaEnc& f);
 bool estaVazia(const FilaEnc& f);
-bool enfileira(FilaEnc& f, const ProdutoFila& valor);
-bool desenfileira(FilaEnc& f, ProdutoFila& valorRemovido);
+bool enfileira(FilaEnc& f, const Pedido& valor);
+bool desenfileira(FilaEnc& f, Pedido& valorRemovido);
 int tamanho(const FilaEnc& f);
 
 #endif

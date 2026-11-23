@@ -5,8 +5,8 @@
 
 int totalrotacoes = 0;
 
-NoAVL::NoAVL(Produto p) : 
-    prod(p), 
+NoAVL::NoAVL(Pedido p) :
+    prod(p),
     esq(nullptr),
     dir(nullptr),
     altura(0) {}
@@ -91,7 +91,7 @@ NoAVL *Balancear(NoAVL *no){
     return no;
 }
 
-NoAVL* Inserir(NoAVL *no, Produto p) {
+NoAVL* Inserir(NoAVL *no, Pedido p) {
     if (no == nullptr) {
         return new NoAVL(p);
     }
@@ -109,8 +109,7 @@ NoAVL* Inserir(NoAVL *no, Produto p) {
     return Balancear(no);
 }
 
-
-NoAVL *Buscar(NoAVL *no, int codigo){
+const NoAVL* Buscar(const NoAVL *no, int codigo){
     if(no == nullptr || no->prod.cod == codigo){
         return no;
     }
@@ -119,7 +118,5 @@ NoAVL *Buscar(NoAVL *no, int codigo){
         return Buscar(no->esq, codigo);
     }
 
-    
     return Buscar(no->dir, codigo);
-    
 }

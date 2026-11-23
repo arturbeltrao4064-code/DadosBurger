@@ -44,7 +44,7 @@ NoAVL* carregarPedidos(const std::string& caminho, NoAVL* raiz)
                 continue;
             }
 
-            Produto novoProduto;
+            Pedido novoProduto;
             novoProduto.cod = codigo;
             novoProduto.nome = linhaReceita;
 
