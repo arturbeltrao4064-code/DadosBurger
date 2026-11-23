@@ -74,16 +74,10 @@ bool salvarPartida(const Partida& p, const std::string& caminho) {
     int quantidadeIngredientes = 0;
     const NoPilha* ingrediente = p.hamburguer.topo;
 
-    while (ingrediente != nullptr) {
-        if (!nomeValidoParaArquivo(ingrediente->dado.nome)) {
-            std::cerr << "Nome de ingrediente invalido para o formato atual.\n";
-            arquivo.close();
-            return false;
-        }
-
-        quantidadeIngredientes++;
-        ingrediente = ingrediente->prox;
-    }
+   while (ingrediente != nullptr) {
+    quantidadeIngredientes++;
+    ingrediente = ingrediente->prox;
+}
 
     arquivo << quantidadeIngredientes << '\n';
 
@@ -91,12 +85,10 @@ bool salvarPartida(const Partida& p, const std::string& caminho) {
     ingrediente = p.hamburguer.topo;
 
     while (ingrediente != nullptr) {
-        arquivo << ingrediente->dado.cod << ' '
-                << ingrediente->dado.nome << ' '
-                << ingrediente->dado.preco << '\n';
+    arquivo << ingrediente->dado.cod << '\n';
 
-        ingrediente = ingrediente->prox;
-    }
+    ingrediente = ingrediente->prox;
+}
 
     // 5. Estoque.
     arquivo << "ESTOQUE\n";
@@ -129,8 +121,9 @@ bool salvarPartida(const Partida& p, const std::string& caminho) {
     // Gravamos as validades armazenadas no vetor.
     // O carregador reconstruira a propriedade de heap.
     for (int i = 0; i < h.tamanho; i++) {
-        arquivo << h.vetor[i].turno_validade << '\n';
-    }
+    arquivo << h.vetor[i].comida << ' '
+            << h.vetor[i].turno_validade << '\n';
+}
 
     // 7. Cache.
     const TabelaEnc& tabela = p.cache;
