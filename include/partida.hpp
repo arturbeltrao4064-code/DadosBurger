@@ -8,6 +8,7 @@
 #include "cache.hpp"
 #include "avl.hpp"
 #include <cstdlib>
+#include <string>
 
 struct Partida {
     int id;
@@ -21,5 +22,8 @@ struct Partida {
 
 void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId);
 void executarPartida(Partida& p);
+
+bool carregarParitda(Partida& p, const std::string& caminho);
+bool salvarPartida(const Partida& p, const std::string& caminho);
 
 #endif
