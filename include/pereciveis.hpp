@@ -3,6 +3,7 @@
 #define PERECIVEIS_HPP
 
 struct ingrediente {
+    char comida;
     int turno_validade;
 };
 
@@ -15,9 +16,7 @@ struct heap {
     int validade_config;
 };
 
-void inicializarHeap(heap& a, char comida, int capacidade,
-                     int validadeConfig);
-
+void inicializarHeap(heap& a, char comida, int capacidade, int validadeConfig);
 bool estaVazio(const heap& a);
 bool inserir(heap& a, const ingrediente& novo);
 ingrediente remover_min(heap& a);
