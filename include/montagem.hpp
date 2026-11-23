@@ -6,8 +6,6 @@
 
 struct IngredientePilha {
     int cod;
-    std::string nome;
-    float preco;
 };
 
 struct Estoque{
