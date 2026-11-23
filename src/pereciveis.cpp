@@ -9,7 +9,6 @@ void inicializarHeap(heap &a, char comida, int capacidade,
     a.comida = comida;
     a.tamanho = 0;
     a.capacidade = capacidade > 0 ? capacidade : 1;
-    a.turno_preparo = 0;
     a.validade_config = validadeConfig;
 
     a.vetor = new (std::nothrow) ingrediente[a.capacidade];
@@ -69,12 +68,17 @@ void heapify(heap &a, int i)
     }
 }
 
-bool inserir(heap &a, const ingrediente &novo)
+bool inserir(heap &a, const ingrediente &novo, int turnoAtual)
 {
     if (a.vetor == nullptr || a.tamanho >= a.capacidade)
         return false;
 
-    a.vetor[a.tamanho] = novo;
+    ingrediente novoIngrediente = novo;
+
+    novoIngrediente.turno_validade =
+        turnoAtual + a.validade_config;
+
+    a.vetor[a.tamanho] = novoIngrediente;
 
     siftUp(a, a.tamanho);
 
@@ -82,6 +86,7 @@ bool inserir(heap &a, const ingrediente &novo)
 
     return true;
 }
+
 
 ingrediente remover_min(heap &a)
 {
@@ -118,7 +123,6 @@ void destruirHeap(heap &a)
     a.vetor = nullptr;
     a.tamanho = 0;
     a.capacidade = 0;
-    a.turno_preparo = 0;
     a.validade_config = 0;
     a.comida = '\0';
 }

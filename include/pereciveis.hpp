@@ -11,7 +11,6 @@ struct heap {
     ingrediente *vetor;
     int tamanho;
     int capacidade;
-    int turno_preparo;
     int validade_config;
 };
 
@@ -19,7 +18,7 @@ void inicializarHeap(heap& a, char comida, int capacidade,
                      int validadeConfig);
 
 bool estaVazio(const heap& a);
-bool inserir(heap& a, const ingrediente& novo);
+bool inserir(heap& a, const ingrediente& novo, int turnoAtual);
 ingrediente remover_min(heap& a);
 void heapify(heap& a, int i);
 void siftUp(heap& a, int i);
