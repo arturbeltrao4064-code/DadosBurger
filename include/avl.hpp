@@ -3,17 +3,22 @@
 #define AVL_HPP
 
 #include <string>
-#include "produto.hpp"
+
+
+struct Produto {
+    int cod;
+    std::string nome;
+};
 
 struct NoAVL {
-    PRODUTO prod;
+    Produto prod; 
 
     NoAVL *esq;
     NoAVL *dir;
 
     int altura;
 
-    NoAVL(PRODUTO p);
+    NoAVL(Produto p);
 };
 
 // Altura e fator de balanceamento
@@ -29,7 +34,7 @@ NoAVL* RL(NoAVL *no);
 
 // Balanceamento, inserção e busca
 NoAVL* Balancear(NoAVL *no);
-NoAVL* Inserir(NoAVL *no, PRODUTO p);
+NoAVL* Inserir(NoAVL *no, Produto p);
 NoAVL* Buscar(NoAVL *no, int codigo);
 
 #endif

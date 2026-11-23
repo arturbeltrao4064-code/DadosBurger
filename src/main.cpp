@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include "avl.hpp"
 #include "cache.hpp"
@@ -9,8 +10,30 @@
 #include "receita.hpp"
 #include "timer.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
+    // --- Parte do seu amigo (validação dos arquivos de entrada) ---
+    if (argc != 3) {
+        std::cerr << "Uso: " << argv[0]
+                  << " <pedidos.txt> <historico.txt>\n";
+        return 1;
+    }
+
+    std::ifstream arquivoPedidos(argv[1]);
+    if (!arquivoPedidos.is_open()) {
+        std::cerr << "Erro ao abrir o arquivo de pedidos: "
+                  << argv[1] << '\n';
+        return 1;
+    }
+
+    std::ifstream arquivoHistorico(argv[2]);
+    if (!arquivoHistorico.is_open()) {
+        std::cerr << "Erro ao abrir o arquivo de histórico: "
+                  << argv[2] << '\n';
+        return 1;
+    }
+
+    // --- Sua parte (loop principal do menu) ---
     int estado = 0;
 
     while (estado == 0 || estado == 1 || estado == 2 || estado == 3)
