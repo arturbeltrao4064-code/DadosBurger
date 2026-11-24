@@ -1,4 +1,4 @@
-name: Build
+name: Build and tests
 
 on:
   push:
@@ -18,3 +18,7 @@ jobs:
         run: cmake -S . -B build
       - name: Compilar
         run: cmake --build build --parallel 2
+      - name: Testar uma partida completa
+        run: bash tests/smoke.sh
+      - name: Testar carregamento dos arquivos de desenvolvimento
+        run: printf '0\n' | ./build/dado_burger dados/pedidos.txt dados/historico.txt > /dev/null
