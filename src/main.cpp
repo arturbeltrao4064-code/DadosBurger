@@ -1,23 +1,18 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <limits>
 #include "avl.hpp"
-#include "cache.hpp"
-#include "fila.hpp"
 #include "historico.hpp"
-#include "montagem.hpp"
-#include "pereciveis.hpp"
-#include "receita.hpp"
-#include "timer.hpp"
 #include "arquivos.hpp"
+#include "partida.hpp"
 #include <cstdlib>
 #include <ctime>
-#include "partida.hpp"
 
 int main(int argc, char *argv[])
 {
     std::srand(std::time(nullptr));
-    // --- Parte do seu amigo (validação dos arquivos de entrada) ---
+
     if (argc != 3)
     {
         std::cerr << "Uso: " << argv[0]
@@ -28,15 +23,10 @@ int main(int argc, char *argv[])
     NoAVL *raiz = nullptr;
     raiz = carregarPedidos(argv[1], raiz);
 
-    for (int i = 1; i <= 15; i++)
+    if (raiz == nullptr)
     {
-        const NoAVL *encontrado = Buscar(raiz, i);
-
-        if (encontrado != nullptr)
-            std::cout << "Pedido " << i << ": "
-                      << encontrado->prod.nome << '\n';
-        else
-            std::cout << "Pedido " << i << " nao encontrado!\n";
+        std::cerr << "Erro: nenhum pedido foi carregado.\n";
+        return 1;
     }
 
     std::ifstream arquivoHistorico(argv[2]);
@@ -47,21 +37,54 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Inicializa a lista contígua
     ListaContDin historico;
     inicializar(historico);
 
-    // Carrega os registros do arquivo
     if (!carregarHistorico(arquivoHistorico, historico))
     {
         std::cerr << "Erro ao carregar o histórico.\n";
         destruir(historico);
         return 1;
     }
+    arquivoHistorico.close();
 
-    // Menu principal e integracao da partida.
-    int estado = 0;
     Partida partida = {};
+
+    // Executa uma partida e registra o resultado somente quando ela termina.
+    auto executarERegistrar = [&](Partida& jogo)
+    {
+        bool finalizada = executarPartida(jogo);
+
+        if (!finalizada)
+            return;
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        PARTIDA resultado;
+        std::cout << "Nome do jogador: ";
+        std::getline(std::cin, resultado.nome_jogador);
+
+        if (resultado.nome_jogador.empty())
+            resultado.nome_jogador = "Jogador";
+
+        resultado.pontuacao = jogo.pontuacao;
+
+        if (!salvarHistorico(argv[2], resultado))
+        {
+            std::cout << "Nao foi possivel salvar o resultado no arquivo.\n";
+            return;
+        }
+
+        if (!inserir(historico, resultado, historico.tamanho))
+        {
+            std::cout << "Resultado salvo no arquivo, mas nao foi possivel atualizar a lista em memoria.\n";
+            return;
+        }
+
+        std::cout << "Resultado registrado no historico!\n";
+    };
+
+    int estado = 0;
 
     while (estado != 5)
     {
@@ -81,7 +104,7 @@ int main(int argc, char *argv[])
         {
             inicializarPartida(partida, raiz, partida.id);
             std::cout << "Nova partida inicializada!\n";
-            executarPartida(partida);
+            executarERegistrar(partida);
             estado = 0;
         }
         else if (estado == 2)
@@ -101,7 +124,7 @@ int main(int argc, char *argv[])
             if (carregarPartida(partida, "partida.txt"))
             {
                 std::cout << "Partida carregada com sucesso!\n";
-                executarPartida(partida);
+                executarERegistrar(partida);
             }
             else
             {
@@ -114,6 +137,7 @@ int main(int argc, char *argv[])
             std::cout << "\n========== HISTORICO ==========\n";
             if (historico.tamanho == 0)
                 std::cout << "Ainda nao ha partidas registradas.\n";
+
             for (int i = 0; i < historico.tamanho; ++i)
             {
                 std::cout << i + 1 << ". " << historico.historico[i].nome_jogador
@@ -128,17 +152,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (estado == 67)
-    {
-        std::cout << R"(.d8888b.       8888888888P
-       d88P  Y88b            d88P
-       888                  d88P
-       888d888b.           d88P
-       888P "Y88b         d88P
-       888    888        d88P
-       Y88b  d88P       d88Px
-        "Y8888P"       d88P)";
-    }
-
+    destruir(historico);
     return 0;
 }
