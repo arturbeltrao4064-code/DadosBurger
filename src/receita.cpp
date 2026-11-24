@@ -31,10 +31,10 @@ void imprimir(const ListaReceita& lista) {
     }
 }
 
-IngredienteReceita buscar(const ListaReceita& lista, int cod) {
+Ingrediente buscar(const ListaReceita& lista, int cod) {
     const NoReceita *aux = lista.ini;
 
-    IngredienteReceita ingrediente = {0, "", 0.0f};
+    Ingrediente ingrediente = {0, "", 0.0f};
 
     while (aux != nullptr) {
         if (aux->dado.cod == cod)
@@ -46,7 +46,7 @@ IngredienteReceita buscar(const ListaReceita& lista, int cod) {
     return ingrediente;
 }
 
-int inserirInicio(ListaReceita& lista, IngredienteReceita ingrediente) {
+int inserirInicio(ListaReceita& lista, Ingrediente ingrediente) {
     NoReceita *novo = new (std::nothrow) NoReceita;
 
     if (novo == nullptr)
@@ -60,7 +60,7 @@ int inserirInicio(ListaReceita& lista, IngredienteReceita ingrediente) {
     return 1;
 }
 
-int inserirFim(ListaReceita& lista, IngredienteReceita ingrediente) {
+int inserirFim(ListaReceita& lista, Ingrediente ingrediente) {
     NoReceita *novo = new (std::nothrow) NoReceita;
 
     if (novo == nullptr)

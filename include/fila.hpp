@@ -3,8 +3,6 @@
 
 #include "avl.hpp"
 
-constexpr int CLIENTES = 10;
-
 struct NoFila {
     NoFila *prox;
     Pedido dado;

@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
         }
         if (estado == 1)
         {
+            
         }
         if (estado == 2)
         {
