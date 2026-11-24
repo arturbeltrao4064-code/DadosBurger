@@ -108,13 +108,15 @@ static void mostrarHistorico(const ListaContDin& historico) {
 static void mostrarComoJogar() {
     std::cout << "\n========== COMO JOGAR ==========\n";
     std::cout << "Objetivo: atender todos os clientes antes que percam a paciencia.\n";
-    std::cout << "Cada cliente comeca com 15 turnos de paciencia.\n";
-    std::cout << "Acoes que consomem turno: preparar, adicionar e remover ingrediente.\n";
-    std::cout << "Consultas de pedido e estoque nao consomem turno.\n";
+    std::cout << "Cada cliente comeca com 15 turnos de paciencia. A partida tem 10 clientes.\n";
+    std::cout << "I prepara, A adiciona e R remove ingrediente; cada acao consome 1 turno.\n";
+    std::cout << "E consulta o estoque e P consulta o pedido; essas consultas nao consomem turno.\n";
     std::cout << "Ingredientes: k ketchup, m mostarda, p picles, a alface, z pao de cima,\n";
     std::cout << "s queijo suico, q cheddar, c cebola, t tomate, n carne, o ovo e b bacon.\n";
     std::cout << "Prepare os ingredientes que precisam de preparo antes de adiciona-los.\n";
-    std::cout << "O pao de cima fecha o hamburguer. A receita deve corresponder exatamente.\n";
+    std::cout << "O pao de baixo ja esta no prato e nao faz parte da receita.\n";
+    std::cout << "O pao de cima fecha o hamburguer; depois dele nao se adiciona mais nada.\n";
+    std::cout << "Carne, ovo e bacon vencem apos 3 turnos; o que vence primeiro sai primeiro.\n";
     std::cout << "Vitoria: atender todos os clientes. Derrota: paciencia chegar a zero.\n";
 }
 
@@ -134,6 +136,7 @@ static void escreverRelatorio(const NoAVL *raiz, int historicoCarregado) {
     std::cout << "Altura da AVL: " << altura << "\n";
     std::cout << "Rotacoes na insercao: " << totalrotacoes << "\n";
     std::cout << "Entradas carregadas no historico: " << historicoCarregado << "\n";
+    std::cout << "Buscas na AVL: " << totalBuscas << "\n";
     std::cout << "Comparacoes nas buscas AVL: " << totalComparacoesBusca << "\n";
     std::cout << "Media de comparacoes por busca: " << media << "\n";
     std::cout << "Tempo total das buscas AVL: " << tempoTotalBuscas << " segundos\n";
@@ -150,6 +153,7 @@ static void escreverRelatorio(const NoAVL *raiz, int historicoCarregado) {
         log << "Altura da AVL: " << altura << "\n";
         log << "Rotacoes na insercao: " << totalrotacoes << "\n";
         log << "Entradas carregadas no historico: " << historicoCarregado << "\n";
+        log << "Buscas na AVL: " << totalBuscas << "\n";
         log << "Comparacoes nas buscas AVL: " << totalComparacoesBusca << "\n";
         log << "Media de comparacoes por busca: " << media << "\n";
         log << "Tempo total das buscas AVL: " << tempoTotalBuscas << " segundos\n";
