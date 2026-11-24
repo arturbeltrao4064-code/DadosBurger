@@ -2,10 +2,12 @@
 #define AVL_HPP
 
 #include <string>
+#include "receita.hpp"
 
 struct Pedido {
     int cod;
     std::string nome;
+    ListaReceita receita;
 };
 
 struct NoAVL {
