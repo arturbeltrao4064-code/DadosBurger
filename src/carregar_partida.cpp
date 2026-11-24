@@ -88,20 +88,20 @@ bool carregarPartida(Partida &p, const std::string &caminho)
     int versao = 0;
 
     if (!(arquivo >> marcador >> versao) ||
-        marcador != "DADOSBURGER_SAVE" || versao != 2)
+        marcador != "DADOSBURGER_SAVE" || versao != 3)
     {
         std::cerr << "Arquivo invalido ou versao de salvamento desconhecida.\n";
         return falha();
     }
 
     if (!(arquivo >> marcador) || marcador != "DADOS" ||
-        !(arquivo >> temp.id >> temp.turnoAtual >> temp.pontuacao))
+        !(arquivo >> temp.id >> temp.turnoAtual >> temp.pontuacao >> temp.pacienciaAtual))
     {
         std::cerr << "Erro ao ler os dados principais da partida.\n";
         return falha();
     }
 
-    // Fila de pedidos.
+    if (temp.pacienciaAtual < 0 || temp.pacienciaAtual > 5)\n    {\n        std::cerr << "Paciencia do cliente invalida.\\n";\n        return falha();\n    }\n\n    // Fila de pedidos.
     int quantidadeClientes = 0;
     if (!(arquivo >> marcador) || marcador != "FILA" ||
         !(arquivo >> quantidadeClientes) ||
