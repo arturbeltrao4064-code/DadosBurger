@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
         else if (estado == 2)
         {
             std::cout << "\nObjetivo: atender todos os clientes antes que percam a paciencia.\n";
-            std::cout << "Cada cliente comeca com 5 turnos de paciencia.\n";
+            std::cout << "Cada cliente comeca com 15 turnos de paciencia.\n";
             std::cout << "[I] prepara ingrediente; [A] adiciona ao hamburguer;\n";
             std::cout << "[R] remove do topo; [M] entrega o pedido;\n";
             std::cout << "[E] consulta estoque; [P] consulta pedido; [S] salva e volta ao menu.\n";
