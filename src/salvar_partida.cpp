@@ -1,33 +1,30 @@
-
 #include "partida.hpp"
 
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 #include <string>
 
-// Verifica se um nome pode ser gravado no formato atual.
-// O carregador atual le nomes usando operador >>,
-// portanto nomes com espacos nao sao suportados.
-bool nomeValidoParaArquivo(const std::string &nome)
+namespace
 {
-    if (nome.empty())
-        return false;
+bool ingredienteValido(const Ingrediente &ingrediente)
+{
+    return ingrediente.comida != '\0' &&
+           ingrediente.turno_validade >= 0 &&
+           ingrediente.qnt >= 0;
+}
 
-    for (int i = 0; nome[i] != '\0'; i++)
-    {
-        if (nome[i] == ' ' || nome[i] == '\t' ||
-            nome[i] == '\n' || nome[i] == '\r')
-        {
-            return false;
-        }
-    }
-
-    return true;
+bool heapValido(const heap &h)
+{
+    return h.capacidade >= 0 &&
+           h.tamanho >= 0 &&
+           h.tamanho <= h.capacidade &&
+           (h.tamanho == 0 || h.vetor != nullptr);
+}
 }
 
 bool salvarPartida(const Partida &p, const std::string &caminho)
 {
-
     std::ofstream arquivo(caminho.c_str());
 
     if (!arquivo.is_open())
@@ -36,149 +33,129 @@ bool salvarPartida(const Partida &p, const std::string &caminho)
         return false;
     }
 
-    // 1. Identificacao e versao do arquivo.
-    arquivo << "DADOSBURGER_SAVE 1\n";
+    // Versao 2: salva Ingrediente completo e os tres heaps de pereciveis.
+    arquivo << "DADOSBURGER_SAVE 2\n";
 
-    // 2. Dados principais da partida.
-    arquivo << "DADOS\n";
-    arquivo << p.id << ' '
-            << p.turnoAtual << ' '
-            << p.pontuacao << '\n';
+    arquivo << "DADOS\n"
+            << p.id << ' ' << p.turnoAtual << ' ' << p.pontuacao << '\n';
 
-    // 3. Fila de clientes.
+    // Fila: Pedido possui codigo e nome.
     arquivo << "FILA\n";
+    arquivo << tamanho(p.filaClientes) << '\n';
 
-    int quantidadeClientes = 0;
-    const NoFila *cliente = p.filaClientes.frente;
-
-    while (cliente != nullptr)
+    for (const NoFila *cliente = p.filaClientes.frente;
+         cliente != nullptr; cliente = cliente->prox)
     {
-        if (!nomeValidoParaArquivo(cliente->dado.nome))
+        arquivo << cliente->dado.cod << ' '
+                << std::quoted(cliente->dado.nome) << '\n';
+    }
+
+    // Pilha: grava do topo para a base, com todos os campos de Ingrediente.
+    arquivo << "PILHA\n" << tamanho(p.hamburguer) << '\n';
+
+    for (const NoPilha *atual = p.hamburguer.topo;
+         atual != nullptr; atual = atual->prox)
+    {
+        const Ingrediente &i = atual->dado;
+        if (!ingredienteValido(i))
         {
-            std::cerr << "Nome de pedido invalido para o formato atual.\n";
-            arquivo.close();
+            std::cerr << "Ingrediente invalido na pilha.\n";
             return false;
         }
 
-        quantidadeClientes++;
-        cliente = cliente->prox;
+        arquivo << i.comida << ' ' << i.turno_validade << ' '
+                << i.qnt << '\n';
     }
 
-    arquivo << quantidadeClientes << '\n';
-
-    cliente = p.filaClientes.frente;
-
-    while (cliente != nullptr)
-    {
-        arquivo << cliente->dado.cod << ' '
-                << cliente->dado.nome << '\n';
-
-        cliente = cliente->prox;
-    }
-
-    // 4. Pilha do hamburguer.
-    arquivo << "PILHA\n";
-
-    int quantidadeIngredientes = 0;
-    const NoPilha *ingrediente = p.hamburguer.topo;
-
-    while (ingrediente != nullptr)
-    {
-        quantidadeIngredientes++;
-        ingrediente = ingrediente->prox;
-    }
-
-    arquivo << quantidadeIngredientes << '\n';
-
-    // Grava do topo para a base.
-    ingrediente = p.hamburguer.topo;
-
-    while (ingrediente != nullptr)
-    {
-        arquivo << ingrediente->dado.cod << '\n';
-
-        ingrediente = ingrediente->prox;
-    }
-
-    // 5. Estoque.
+    // Ingredientes fixos do estoque.
     arquivo << "ESTOQUE\n";
+    const Ingrediente *fixos[] = {
+        &p.e.queijo_suico, &p.e.cheddar, &p.e.cebola, &p.e.tomate
+    };
 
-    arquivo << p.e.queijo_suico << ' '
-            << p.e.cheddar << ' '
-            << p.e.cebola << ' '
-            << p.e.tomate << '\n';
-
-    // 6. Heap de pereciveis.
-    const heap &h = p.e.pereciveis;
-
-    if (h.tamanho < 0 ||
-        h.capacidade < 0 ||
-        h.tamanho > h.capacidade ||
-        (h.tamanho > 0 && h.vetor == nullptr))
+    for (const Ingrediente *i : fixos)
     {
+        if (!ingredienteValido(*i))
+        {
+            std::cerr << "Ingrediente invalido no estoque.\n";
+            return false;
+        }
 
-        std::cerr << "Estado invalido do heap de pereciveis.\n";
-        arquivo.close();
-        return false;
+        arquivo << i->comida << ' ' << i->turno_validade << ' '
+                << i->qnt << ' ';
+    }
+    arquivo << '\n';
+
+    // Existem tres heaps: carne, ovo e bacon.
+    arquivo << "HEAPS\n3\n";
+    for (int indice = 0; indice < 3; ++indice)
+    {
+        const heap &h = p.e.pereciveis[indice];
+
+        if (!heapValido(h))
+        {
+            std::cerr << "Estado invalido no heap de pereciveis.\n";
+            return false;
+        }
+
+        arquivo << h.comida << ' ' << h.validade_config << ' '
+                << h.capacidade << ' ' << h.tamanho << '\n';
+
+        for (int i = 0; i < h.tamanho; ++i)
+        {
+            const Ingrediente &ingrediente = h.vetor[i];
+            if (!ingredienteValido(ingrediente))
+            {
+                std::cerr << "Ingrediente invalido em um heap.\n";
+                return false;
+            }
+
+            arquivo << ingrediente.comida << ' '
+                    << ingrediente.turno_validade << ' '
+                    << ingrediente.qnt << '\n';
+        }
     }
 
-    arquivo << "HEAP\n";
-
-    arquivo << h.comida << ' '
-            << h.validade_config << ' '
-            << h.capacidade << ' '
-            << h.tamanho << '\n';
-
-    // Gravamos as validades armazenadas no vetor.
-    // O carregador reconstruira a propriedade de heap.
-    for (int i = 0; i < h.tamanho; i++)
-    {
-        arquivo << h.vetor[i].comida << ' '
-                << h.vetor[i].turno_validade << '\n';
-    }
-
-    // 7. Cache.
+    // Cache: grava cada par chave/valor uma unica vez.
     const TabelaEnc &tabela = p.cache;
-
     if (tabela.m < 0 || tabela.n < 0 ||
-        (tabela.m > 0 && tabela.tabela == nullptr))
+        (tabela.m > 0 && tabela.tabela == nullptr) ||
+        (tabela.m == 0 && tabela.n != 0))
     {
-
         std::cerr << "Estado invalido do cache.\n";
-        arquivo.close();
         return false;
     }
 
-    arquivo << "CACHE\n";
-    arquivo << tabela.m << ' ' << tabela.n << '\n';
+    arquivo << "CACHE\n" << tabela.m << ' ' << tabela.n << '\n';
+    int elementosGravados = 0;
 
     if (tabela.tabela != nullptr)
     {
-        for (int i = 0; i < tabela.m; i++)
+        for (int i = 0; i < tabela.m; ++i)
         {
-            const No *atual = tabela.tabela[i];
-
-            while (atual != nullptr)
+            for (const No *atual = tabela.tabela[i];
+                 atual != nullptr; atual = atual->prox)
             {
-                arquivo << atual->chave << ' '
-                        << atual->valor << '\n';
-
-                atual = atual->prox;
+                arquivo << atual->chave << ' ' << atual->valor << '\n';
+                ++elementosGravados;
             }
         }
     }
 
-    // 8. Marcador de final.
-    arquivo << "FIM\n";
-
-    if (!arquivo.good())
+    if (elementosGravados != tabela.n)
     {
-        std::cerr << "Erro durante a escrita do arquivo.\n";
-        arquivo.close();
+        std::cerr << "Quantidade de elementos do cache inconsistente.\n";
         return false;
     }
 
+    arquivo << "FIM\n";
     arquivo.close();
+
+    if (!arquivo)
+    {
+        std::cerr << "Erro durante a escrita do arquivo.\n";
+        return false;
+    }
 
     return true;
 }
