@@ -1,0 +1,20 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - implementaçaofinal
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+      - name: Configurar CMake
+        run: cmake -S . -B build
+      - name: Compilar
+        run: cmake --build build --parallel 2
