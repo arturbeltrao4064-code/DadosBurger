@@ -31,12 +31,14 @@ void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId) {
     }
 }
 
-void executarPartida(Partida& p) {
+bool executarPartida(Partida& p) {
     char jogando = 'J';
+    bool partidaFinalizada = false;
 
     while (jogando == 'J') {
         if (estaVazia(p.filaClientes)) {
             std::cout << "\nParabens! Todos os clientes foram atendidos!\n";
+            partidaFinalizada = true;
             break;
         }
 
@@ -104,7 +106,7 @@ void executarPartida(Partida& p) {
         }
         else if (jogando == 'A') {
             char ingrediente;
-            Ingrediente adicionar = {'\0', 0, 0};
+            Ingrediente adicionar = {'\\0', 0, 0};
             bool disponivel = false;
             std::cout << "Adicionar: [S] queijo suico, [Q] cheddar, [C] cebola, [T] tomate, [N] carne, [O] ovo, [B] bacon: ";
             std::cin >> ingrediente;
@@ -118,7 +120,7 @@ void executarPartida(Partida& p) {
                 int indice = ingrediente == 'n' ? 0 : (ingrediente == 'o' ? 1 : 2);
                 if (!estaVazio(p.e.pereciveis[indice])) {
                     adicionar = remover_min(p.e.pereciveis[indice]);
-                    disponivel = adicionar.comida != '\0';
+                    disponivel = adicionar.comida != '\\0';
                 }
             }
 
@@ -156,8 +158,7 @@ void executarPartida(Partida& p) {
                 continue;
             }
 
-            // A lista atual de pedidos guarda codigo e nome, mas nao a composicao
-            // dos ingredientes da receita. Por isso a entrega valida apenas hamburguer nao vazio.
+            // A composicao da receita ainda nao e validada nesta versao.
             Pedido atendido;
             desenfileira(p.filaClientes, atendido);
             Ingrediente removido;
@@ -169,6 +170,7 @@ void executarPartida(Partida& p) {
 
             if (estaVazia(p.filaClientes)) {
                 std::cout << "VITORIA! Todos os clientes foram atendidos.\n";
+                partidaFinalizada = true;
                 break;
             }
 
@@ -181,12 +183,9 @@ void executarPartida(Partida& p) {
             continue;
         }
 
-        // Cada acao de preparacao, adicao ou remocao consome um turno
-        // e reduz a paciencia do cliente atual.
         p.turnoAtual++;
         p.pacienciaAtual--;
 
-        // Ingredientes pereciveis vencidos sao descartados do topo dos heaps.
         for (int indice = 0; indice < 3; ++indice) {
             while (!estaVazio(p.e.pereciveis[indice]) &&
                    p.e.pereciveis[indice].vetor[0].turno_validade < p.turnoAtual) {
@@ -197,9 +196,12 @@ void executarPartida(Partida& p) {
         if (p.pacienciaAtual <= 0) {
             std::cout << "\nO cliente perdeu a paciencia! Fim de jogo.\n";
             std::cout << "Pontuacao final: " << p.pontuacao << '\n';
+            partidaFinalizada = true;
             break;
         }
 
         jogando = 'J';
     }
+
+    return partidaFinalizada;
 }
