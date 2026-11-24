@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
         log << "Entradas carregadas no historico: " << historico.tamanho << "\n\n";
     }
 
-    int opcao = 0;
+    int opcao = -1;
     while (opcao != 0) {
         std::cout << "\n========== DADO BURGER ==========\n";
         std::cout << "[1] Novo jogo\n";
