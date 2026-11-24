@@ -62,7 +62,6 @@ int main(int argc, char *argv[])
     // Menu principal e integracao da partida.
     int estado = 0;
     Partida partida = {};
-    bool partidaCarregada = false;
 
     while (estado != 5)
     {
@@ -81,7 +80,6 @@ int main(int argc, char *argv[])
         if (estado == 1)
         {
             inicializarPartida(partida, raiz, partida.id);
-            partidaCarregada = false;
             std::cout << "Nova partida inicializada!\n";
             executarPartida(partida);
             estado = 0;
@@ -103,9 +101,7 @@ int main(int argc, char *argv[])
             if (carregarPartida(partida, "partida.txt"))
             {
                 std::cout << "Partida carregada com sucesso!\n";
-                partidaCarregada = true;
                 executarPartida(partida);
-                partidaCarregada = false;
             }
             else
             {
