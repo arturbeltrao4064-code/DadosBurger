@@ -137,6 +137,8 @@ static void escreverRelatorio(const NoAVL *raiz, int historicoCarregado) {
     std::cout << "Comparacoes nas buscas AVL: " << totalComparacoesBusca << "\n";
     std::cout << "Media de comparacoes por busca: " << media << "\n";
     std::cout << "Tempo total das buscas AVL: " << tempoTotalBuscas << " segundos\n";
+    std::cout << "Hash - tamanho da tabela: 101\n";
+    std::cout << "Hash - entradas ocupadas: " << totalEntradasCache << "\n";
     std::cout << "Hash - hits: " << totalHits << ", misses: " << totalMisses << "\n";
     std::cout << "Hash - taxa de acerto: " << taxa << "%\n";
     std::cout << "Hash - fator de carga: " << (totalHits + totalMisses > 0 ? (double)totalEntradasCache / 101.0 : 0.0) << "\n";
@@ -151,6 +153,8 @@ static void escreverRelatorio(const NoAVL *raiz, int historicoCarregado) {
         log << "Comparacoes nas buscas AVL: " << totalComparacoesBusca << "\n";
         log << "Media de comparacoes por busca: " << media << "\n";
         log << "Tempo total das buscas AVL: " << tempoTotalBuscas << " segundos\n";
+        log << "Hash - tamanho da tabela: 101\n";
+        log << "Hash - entradas ocupadas: " << totalEntradasCache << "\n";
         log << "Hash - hits: " << totalHits << ", misses: " << totalMisses << "\n";
         log << "Hash - taxa de acerto: " << taxa << "%\n";
         log << "Hash - fator de carga: " << (double)totalEntradasCache / 101.0 << "\n";
@@ -223,7 +227,7 @@ int main(int argc, char *argv[]) {
         std::cout << "[1] Novo jogo\n";
         std::cout << "[2] Como jogar\n";
         std::cout << "[3] Historico\n";
-        std::cout << "[4] Sair\n";
+        std::cout << "[0] Sair\n";
         std::cout << "Escolha: ";
 
         if (!(std::cin >> opcao)) {
