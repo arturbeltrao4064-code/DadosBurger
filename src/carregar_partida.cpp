@@ -101,7 +101,7 @@ bool carregarPartida(Partida &p, const std::string &caminho)
         return falha();
     }
 
-    if (temp.pacienciaAtual < 0 || temp.pacienciaAtual > 5)
+    if (temp.pacienciaAtual < 0 || temp.pacienciaAtual > 15)
     {
         std::cerr << "Paciencia do cliente invalida.\n";
         return falha();
