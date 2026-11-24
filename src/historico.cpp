@@ -9,7 +9,7 @@ void inicializar(ListaContDin &l, int capacidadeIni)
 
     l.tamanho = 0;
     l.capacidade = capacidadeIni;
-    l.historico = new (std::nothrow) PARTIDA[l.capacidade];
+    l.historico = new PARTIDA[l.capacidade];
 
     if (l.historico == nullptr)
         l.capacidade = 0;

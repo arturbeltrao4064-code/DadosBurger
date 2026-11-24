@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     }
     arquivoHistorico.close();
 
-    Partida partida = {};
+    Partida partida;
 
     // Executa uma partida e registra o resultado somente quando ela termina.
     auto executarERegistrar = [&](Partida& jogo)

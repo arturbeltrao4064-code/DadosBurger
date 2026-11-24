@@ -55,7 +55,7 @@ bool executarPartida(Partida& p) {
         std::cout << "[P] Consultar pedido\n";
         std::cout << "[S] Salvar e voltar ao menu\n";
         std::cin >> jogando;
-        jogando = static_cast<char>(std::toupper(static_cast<unsigned char>(jogando)));
+        jogando = toupper(jogando);
 
         if (jogando == 'S') {
             if (salvarPartida(p, "partida.txt"))
@@ -83,14 +83,17 @@ bool executarPartida(Partida& p) {
             char ingrediente;
             std::cout << "Preparar: [S] queijo suico, [Q] cheddar, [C] cebola, [T] tomate, [N] carne, [O] ovo, [B] bacon: ";
             std::cin >> ingrediente;
-            ingrediente = static_cast<char>(std::tolower(static_cast<unsigned char>(ingrediente)));
+            ingrediente = tolower(ingrediente);
 
-            if (ingrediente == 's') p.e.queijo_suico.qnt++;
-            else if (ingrediente == 'q') p.e.cheddar.qnt++;
-            else if (ingrediente == 'c') p.e.cebola.qnt++;
-            else if (ingrediente == 't') p.e.tomate.qnt++;
+            if (ingrediente == 's'){p.e.queijo_suico.qnt++;}
+            else if (ingrediente == 'q') {p.e.cheddar.qnt++;}
+            else if (ingrediente == 'c') {p.e.cebola.qnt++;}
+            else if (ingrediente == 't') {p.e.tomate.qnt++;}
             else if (ingrediente == 'n' || ingrediente == 'o' || ingrediente == 'b') {
-                int indice = ingrediente == 'n' ? 0 : (ingrediente == 'o' ? 1 : 2);
+                int indice;
+                if(ingrediente == 'n') indice = 0;
+                if(ingrediente == 'o') indice = 1;
+                if(ingrediente == 'b') indice = 2;
                 Ingrediente novo = {ingrediente, 0, 1};
                 if (!inserir(p.e.pereciveis[indice], novo, p.turnoAtual)) {
                     std::cout << "Estoque perecivel cheio ou nao inicializado. Acao cancelada.\n";
@@ -110,7 +113,7 @@ bool executarPartida(Partida& p) {
             bool disponivel = false;
             std::cout << "Adicionar: [S] queijo suico, [Q] cheddar, [C] cebola, [T] tomate, [N] carne, [O] ovo, [B] bacon: ";
             std::cin >> ingrediente;
-            ingrediente = static_cast<char>(std::tolower(static_cast<unsigned char>(ingrediente)));
+            ingrediente = tolower(ingrediente);
 
             if (ingrediente == 's' && p.e.queijo_suico.qnt > 0) { adicionar = p.e.queijo_suico; disponivel = true; }
             else if (ingrediente == 'q' && p.e.cheddar.qnt > 0) { adicionar = p.e.cheddar; disponivel = true; }

@@ -47,7 +47,7 @@ IngredienteReceita buscar(const ListaReceita& lista, int cod) {
 }
 
 int inserirInicio(ListaReceita& lista, IngredienteReceita ingrediente) {
-    NoReceita *novo = new (std::nothrow) NoReceita;
+    NoReceita *novo = new NoReceita;
 
     if (novo == nullptr)
         return 0;
@@ -61,7 +61,7 @@ int inserirInicio(ListaReceita& lista, IngredienteReceita ingrediente) {
 }
 
 int inserirFim(ListaReceita& lista, IngredienteReceita ingrediente) {
-    NoReceita *novo = new (std::nothrow) NoReceita;
+    NoReceita *novo = new NoReceita;
 
     if (novo == nullptr)
         return 0;
