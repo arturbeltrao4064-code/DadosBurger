@@ -1,7 +1,6 @@
 
 #include "pereciveis.hpp"
 #include <new>
-#include <utility>
 
 void inicializarHeap(heap &a, char comida, int capacidade,
                      int validadeConfig)
@@ -31,7 +30,9 @@ void siftUp(heap &a, int i)
         if (a.vetor[i].turno_validade <
             a.vetor[pai].turno_validade)
         {
-            std::swap(a.vetor[i], a.vetor[pai]);
+            Ingrediente temporario = a.vetor[i];
+            a.vetor[i] = a.vetor[pai];
+            a.vetor[pai] = temporario;
             i = pai;
         }
         else
@@ -63,7 +64,9 @@ void heapify(heap &a, int i)
 
     if (menor != i)
     {
-        std::swap(a.vetor[i], a.vetor[menor]);
+        Ingrediente temporario = a.vetor[i];
+        a.vetor[i] = a.vetor[menor];
+        a.vetor[menor] = temporario;
         heapify(a, menor);
     }
 }

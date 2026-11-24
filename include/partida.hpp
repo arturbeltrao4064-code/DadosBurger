@@ -8,7 +8,6 @@
 #include "cache.hpp"
 #include "avl.hpp"
 #include <cstdlib>
-#include <string>
 
 struct Partida {
     int id;
@@ -21,10 +20,9 @@ struct Partida {
     TabelaEnc cache;
 };
 
+extern double tempoTotalBuscas;
+
 void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId);
 bool executarPartida(Partida& p);
-
-bool carregarPartida(Partida& p, const std::string& caminho);
-bool salvarPartida(const Partida& p, const std::string& caminho);
 
 #endif

@@ -4,3 +4,10 @@ build/
 *.exe
 .vscode/
 .idea/
+
+# Arquivos temporarios dos testes automatizados
+pedidos_teste.txt
+historico_teste.txt
+historico_original.txt
+saida_teste.txt
+saida_historico.txt
