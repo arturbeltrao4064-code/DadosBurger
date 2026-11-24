@@ -81,6 +81,3 @@ A ordenação é feita sobre uma cópia do histórico, preservando a ordem dos r
 
 O workflow do GitHub Actions compila o projeto, executa um teste automatizado de partida com 10 clientes, verifica cache e Quick Sort e testa o carregamento dos arquivos de desenvolvimento.
 
-## Declaração de uso de IA
-
-Foi utilizado ChatGPT como apoio ao desenvolvimento e à integração do projeto, incluindo implementação e revisão de módulos, tratamento de arquivos, interface do jogo, métricas, relatório de desempenho e criação de testes automatizados. O uso foi realizado conforme a orientação atualizada fornecida pelo professor. O grupo deve revisar o código, validar o comportamento e estar preparado para explicar as decisões e estruturas utilizadas.
