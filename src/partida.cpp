@@ -38,25 +38,13 @@ static void avancarTurno(Partida& p) {
     p.turnoAtual++;
 }
 
-static bool receitaCorreta(const std::string& texto, const PilhaEnc& pilha) {
-    ListaReceita receita;
+static bool receitaCorreta(const ListaReceita& receita, const PilhaEnc& pilha) {
     PilhaEnc auxiliar;
-    inicializar(receita);
     inicializa(auxiliar);
-
-    int i;
-    for (i = 0; i < (int)texto.size(); i++) {
-        if (!inserirFim(receita, texto[i])) {
-            destruir(receita);
-            limparHamburguer(auxiliar);
-            return false;
-        }
-    }
 
     const NoPilha *atual = pilha.topo;
     while (atual != nullptr) {
         if (!empilha(auxiliar, atual->dado)) {
-            destruir(receita);
             limparHamburguer(auxiliar);
             return false;
         }
@@ -78,7 +66,6 @@ static bool receitaCorreta(const std::string& texto, const PilhaEnc& pilha) {
 
     if (item != nullptr || !estaVazia(auxiliar)) correta = false;
 
-    destruir(receita);
     limparHamburguer(auxiliar);
     return correta;
 }
@@ -137,7 +124,23 @@ void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId) {
         Pedido pedido;
         pedido.cod = codigo;
         pedido.nome = nome;
+        inicializar(pedido.receita);
+
+        bool receitaCarregada = true;
+        for (int i = 0; i < (int)nome.size(); i++) {
+            if (!inserirFim(pedido.receita, nome[i])) {
+                receitaCarregada = false;
+                break;
+            }
+        }
+
+        if (!receitaCarregada) {
+            destruir(pedido.receita);
+            continue;
+        }
+
         if (enfileira(p.filaClientes, pedido)) clientes++;
+        else destruir(pedido.receita);
     }
 }
 
@@ -280,9 +283,10 @@ bool executarPartida(Partida& p) {
             avancarTurno(p);
 
             if (ingrediente == 'z') {
-                if (receitaCorreta(p.filaClientes.frente->dado.nome, p.hamburguer)) {
+                if (receitaCorreta(p.filaClientes.frente->dado.receita, p.hamburguer)) {
                     Pedido atendido;
                     desenfileira(p.filaClientes, atendido);
+                    destruir(atendido.receita);
                     p.pontuacao++;
                     limparHamburguer(p.hamburguer);
                     p.pacienciaAtual = 15;
