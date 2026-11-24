@@ -75,12 +75,6 @@ bool salvarPartida(const Partida &p, const std::string &caminho)
 
     for (const Ingrediente *i : fixos)
     {
-        if (!ingredienteValido(*i))
-        {
-            std::cerr << "Ingrediente invalido no estoque.\n";
-            return false;
-        }
-
         arquivo << i->comida << ' ' << i->turno_validade << ' '
                 << i->qnt << ' ';
     }
