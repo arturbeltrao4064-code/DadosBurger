@@ -22,6 +22,7 @@ struct TabelaEnc {
 extern int totalHits;
 extern int totalMisses;
 extern int totalColisoes;
+extern int totalEntradasCache;
 
 void encInicializar(TabelaEnc& t, int m);
 void encInserir(TabelaEnc& t, int chave, int valor);
