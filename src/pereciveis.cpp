@@ -90,7 +90,7 @@ bool inserir(heap &a, const Ingrediente &novo, int turnoAtual)
 
 Ingrediente remover_min(heap &a)
 {
-    Ingrediente vazio = {-1};
+    Ingrediente vazio = {'\0', -1, 0};
 
     if (estaVazio(a))
         return vazio;
