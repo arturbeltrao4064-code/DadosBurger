@@ -14,6 +14,7 @@ struct Partida {
     int id;
     int turnoAtual;
     int pontuacao;
+    int pacienciaAtual;
     FilaEnc filaClientes;
     PilhaEnc hamburguer;
     Estoque e;
