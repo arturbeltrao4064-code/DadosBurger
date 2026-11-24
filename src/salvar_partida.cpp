@@ -34,10 +34,11 @@ bool salvarPartida(const Partida &p, const std::string &caminho)
     }
 
     // Versao 2: salva Ingrediente completo e os tres heaps de pereciveis.
-    arquivo << "DADOSBURGER_SAVE 2\n";
+    arquivo << "DADOSBURGER_SAVE 3\n";
 
     arquivo << "DADOS\n"
-            << p.id << ' ' << p.turnoAtual << ' ' << p.pontuacao << '\n';
+            << p.id << ' ' << p.turnoAtual << ' ' << p.pontuacao << ' '
+            << p.pacienciaAtual << '\n';
 
     // Fila: Pedido possui codigo e nome.
     arquivo << "FILA\n";
