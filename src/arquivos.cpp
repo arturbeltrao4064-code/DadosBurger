@@ -4,9 +4,6 @@
 #include <string>
 #include <stdexcept>
 #include "historico.hpp"
-#include <fstream>
-#include <iostream>
-#include <string>
 
 NoAVL* carregarPedidos(const std::string& caminho, NoAVL* raiz)
 {
@@ -24,7 +21,6 @@ NoAVL* carregarPedidos(const std::string& caminho, NoAVL* raiz)
 
     while (std::getline(arquivo, linhaCodigo))
     {
-        // Cada pedido precisa ter uma linha de receita.
         if (!std::getline(arquivo, linhaReceita))
         {
             std::cerr << "Erro: pedido com receita ausente no arquivo.\n";
@@ -36,7 +32,6 @@ NoAVL* carregarPedidos(const std::string& caminho, NoAVL* raiz)
             size_t pos;
             int codigo = std::stoi(linhaCodigo, &pos);
 
-            // Verifica se a linha contém somente o número.
             if (pos != linhaCodigo.size())
             {
                 std::cerr << "Erro: código inválido: "
@@ -63,7 +58,6 @@ NoAVL* carregarPedidos(const std::string& caminho, NoAVL* raiz)
     }
 
     arquivo.close();
-
     return raiz;
 }
 
@@ -74,7 +68,6 @@ bool carregarHistorico(std::ifstream& arquivo, ListaContDin& historico)
 
     while (std::getline(arquivo, nome))
     {
-        // Lê a pontuação correspondente ao jogador.
         if (!std::getline(arquivo, linhaPontuacao))
         {
             std::cerr << "Erro: pontuação ausente para o jogador "
@@ -98,7 +91,6 @@ bool carregarHistorico(std::ifstream& arquivo, ListaContDin& historico)
             novaPartida.nome_jogador = nome;
             novaPartida.pontuacao = pontuacao;
 
-            // Insere sempre no final da lista.
             if (!inserir(historico, novaPartida, historico.tamanho))
                 return false;
         }
@@ -108,6 +100,29 @@ bool carregarHistorico(std::ifstream& arquivo, ListaContDin& historico)
                       << linhaPontuacao << '\n';
             return false;
         }
+    }
+
+    return true;
+}
+
+bool salvarHistorico(const std::string& caminho, const PARTIDA& partida)
+{
+    std::ofstream arquivo(caminho, std::ios::app);
+
+    if (!arquivo.is_open())
+    {
+        std::cerr << "Erro ao abrir o arquivo de histórico para gravação: "
+                  << caminho << '\n';
+        return false;
+    }
+
+    arquivo << partida.nome_jogador << '\n';
+    arquivo << partida.pontuacao << '\n';
+
+    if (!arquivo.good())
+    {
+        std::cerr << "Erro ao gravar o resultado no histórico.\n";
+        return false;
     }
 
     return true;
