@@ -83,7 +83,10 @@ NoAVL* Inserir(NoAVL *no, Pedido p) {
     }
     if (p.cod < no->prod.cod) no->esq = Inserir(no->esq, p);
     else if (p.cod > no->prod.cod) no->dir = Inserir(no->dir, p);
-    else return no;
+    else {
+        destruir(p.receita);
+        return no;
+    }
     return Balancear(no);
 }
 
@@ -102,5 +105,6 @@ void DestruirAVL(NoAVL *no) {
     if (no == nullptr) return;
     DestruirAVL(no->esq);
     DestruirAVL(no->dir);
+    destruir(no->prod.receita);
     delete no;
 }
