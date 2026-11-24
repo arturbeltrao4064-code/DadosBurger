@@ -257,9 +257,12 @@ int main(int argc, char *argv[]) {
             inicializarPartida(partida, raiz, maiorCodigo(raiz));
             executarPartida(partida);
 
-            std::cout << "Nome do jogador (sem espacos): ";
+            std::cin.ignore(10000, '\n');
+            std::cout << "Nome do jogador: ";
             PARTIDA resultado;
-            std::cin >> resultado.nome_jogador;
+            std::getline(std::cin, resultado.nome_jogador);
+            if (resultado.nome_jogador.empty())
+                resultado.nome_jogador = "Jogador";
             if (resultado.nome_jogador.size() > 20)
                 resultado.nome_jogador = resultado.nome_jogador.substr(0, 20);
             resultado.pontuacao = partida.pontuacao;
