@@ -1,7 +1,8 @@
 #include "partida.hpp"
 #include <iostream>
+#include <cstdlib>
 
-void inicializarPartida(Partida& p, const NoAVL& pedidos, int maiorId) {
+void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId) {
     inicializa(p.filaClientes);
     inicializa(p.hamburguer);
     p.e = {};
@@ -12,8 +13,9 @@ void inicializarPartida(Partida& p, const NoAVL& pedidos, int maiorId) {
 
     for (int i = 0; i < CLIENTES; i++) {
         int x = std::rand() % 87000;
-        const NoAVL* tmp = Buscar(&pedidos, x);
-        enfileira(p.filaClientes, tmp->prod);
+        const NoAVL* tmp = Buscar(pedidos, x);
+        if (tmp != nullptr)
+            enfileira(p.filaClientes, tmp->prod);
     }
 }
 
