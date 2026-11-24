@@ -218,7 +218,7 @@ int main(int argc, char *argv[]) {
     }
 
     int opcao = 0;
-    while (opcao != 4) {
+    while (opcao != 0) {
         std::cout << "\n========== DADO BURGER ==========\n";
         std::cout << "[1] Novo jogo\n";
         std::cout << "[2] Como jogar\n";
@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
         else if (opcao == 3) {
             mostrarHistorico(historico);
         }
-        else if (opcao != 4) {
+        else if (opcao != 0) {
             std::cout << "Opcao invalida.\n";
         }
     }
