@@ -4,6 +4,7 @@
 int totalHits = 0;
 int totalMisses = 0;
 int totalColisoes = 0;
+int totalEntradasCache = 0;
 
 int hashDivisao(int k, int m) {
     int resultado = k % m;
@@ -74,6 +75,7 @@ void encInserirReceita(TabelaEnc& t, int chave, const std::string& receita) {
     novo->prox = t.tabela[i];
     t.tabela[i] = novo;
     t.n++;
+    totalEntradasCache++;
 }
 
 std::string encBuscarReceita(const TabelaEnc& t, int chave) {
