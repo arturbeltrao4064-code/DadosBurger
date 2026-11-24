@@ -104,7 +104,10 @@ void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId) {
     int clientes = 0;
 
     while (clientes < CLIENTES && maior >= menor) {
-        int codigo = menor + std::rand() % (maior - menor + 1);
+        unsigned long long sorteio = (unsigned long long)std::rand();
+        sorteio = sorteio * ((unsigned long long)RAND_MAX + 1) + std::rand();
+        int intervalo = maior - menor + 1;
+        int codigo = menor + (int)(sorteio % (unsigned long long)intervalo);
         std::string nome = encBuscarReceita(p.cache, codigo);
 
         if (nome != "") {
