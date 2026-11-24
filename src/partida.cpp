@@ -1,6 +1,7 @@
 #include "partida.hpp"
 #include <iostream>
 #include <cstdlib>
+#include <cctype>
 
 void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId) {
     inicializa(p.filaClientes);
@@ -30,7 +31,7 @@ void executarPartida(Partida& p){
                         "[E]: Ver estoque\n[P]: Ver pedido.\n"
                         "Pressione [S] para salvar a partida.\n";
         std::cin >> jogando;
-        toupper(jogando);
+        jogando = static_cast<char>(std::toupper(static_cast<unsigned char>(jogando)));
         if(jogando != 'I' && jogando != 'A' && jogando != 'R' && jogando != 'E' && jogando != 'P' && jogando != 'M'){
             jogando = 'J';
             std::cout << "Erro! Digite um caracter valido";            
@@ -39,7 +40,7 @@ void executarPartida(Partida& p){
             char ingrediente;
             std::cout << "Qual ingrediente deseja preparar?\nDigite [J] para realizar outra acao.";
             std::cin >> ingrediente;
-            tolower(ingrediente);
+            ingrediente = static_cast<char>(std::tolower(static_cast<unsigned char>(ingrediente)));
             while(ingrediente != 's' && ingrediente != 'q' && ingrediente != 'c' && ingrediente != 't' && ingrediente != 'n' && ingrediente != 'o' && ingrediente != 'b'){
                 std::cout << "Codigo de ingrediente invalido. Tente novamente!";
             }
@@ -81,7 +82,7 @@ void executarPartida(Partida& p){
             char ingrediente;
             std::cout << "Qual ingrediente deseja adicionar ao hamburguer?";
             std::cin >> ingrediente;
-            tolower(ingrediente);
+            ingrediente = static_cast<char>(std::tolower(static_cast<unsigned char>(ingrediente)));
             while(ingrediente != 's' && ingrediente != 'q' && ingrediente != 'c' && ingrediente != 't' && ingrediente != 'n' && ingrediente != 'o' && ingrediente != 'b' && ingrediente != 'z' && ingrediente != 'k' && ingrediente != 'm' && ingrediente != 'p' && ingrediente != 'a'){
                 std::cout << "Codigo de ingrediente invalido. Tente novamente!";
             }
@@ -127,7 +128,7 @@ void executarPartida(Partida& p){
             char ingrediente;
             std::cout << "Qual ingrediente deseja remover do hamburguer?";
             std::cin >> ingrediente;
-            tolower(ingrediente);
+            ingrediente = static_cast<char>(std::tolower(static_cast<unsigned char>(ingrediente)));
             while(ingrediente != 's' && ingrediente != 'q' && ingrediente != 'c' && ingrediente != 't' && ingrediente != 'n' && ingrediente != 'o' && ingrediente != 'b' && ingrediente != 'z' && ingrediente != 'k' && ingrediente != 'm' && ingrediente != 'p' && ingrediente != 'a'){
                 std::cout << "Codigo de ingrediente invalido. Tente novamente!";
             }
