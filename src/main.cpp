@@ -139,7 +139,7 @@ static void escreverRelatorio(const NoAVL *raiz, int historicoCarregado) {
     std::cout << "Tempo total das buscas AVL: " << tempoTotalBuscas << " segundos\n";
     std::cout << "Hash - hits: " << totalHits << ", misses: " << totalMisses << "\n";
     std::cout << "Hash - taxa de acerto: " << taxa << "%\n";
-    std::cout << "Hash - fator de carga: " << (totalHits + totalMisses > 0 ? (double)(totalHits + totalMisses) / 101.0 : 0.0) << "\n";
+    std::cout << "Hash - fator de carga: " << (totalHits + totalMisses > 0 ? (double)totalEntradasCache / 101.0 : 0.0) << "\n";
     std::cout << "Hash - colisoes: " << totalColisoes << "\n";
 
     if (log.is_open()) {
@@ -153,7 +153,7 @@ static void escreverRelatorio(const NoAVL *raiz, int historicoCarregado) {
         log << "Tempo total das buscas AVL: " << tempoTotalBuscas << " segundos\n";
         log << "Hash - hits: " << totalHits << ", misses: " << totalMisses << "\n";
         log << "Hash - taxa de acerto: " << taxa << "%\n";
-        log << "Hash - fator de carga: " << (double)(totalHits + totalMisses) / 101.0 << "\n";
+        log << "Hash - fator de carga: " << (double)totalEntradasCache / 101.0 << "\n";
         log << "Hash - colisoes: " << totalColisoes << "\n\n";
     }
 }
@@ -241,6 +241,7 @@ int main(int argc, char *argv[]) {
             totalHits = 0;
             totalMisses = 0;
             totalColisoes = 0;
+            totalEntradasCache = 0;
 
             Partida partida = {};
             inicializarPartida(partida, raiz, maiorCodigo(raiz));
