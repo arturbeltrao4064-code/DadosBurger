@@ -101,7 +101,13 @@ bool carregarPartida(Partida &p, const std::string &caminho)
         return falha();
     }
 
-    if (temp.pacienciaAtual < 0 || temp.pacienciaAtual > 5)\n    {\n        std::cerr << "Paciencia do cliente invalida.\\n";\n        return falha();\n    }\n\n    // Fila de pedidos.
+    if (temp.pacienciaAtual < 0 || temp.pacienciaAtual > 5)
+    {
+        std::cerr << "Paciencia do cliente invalida.\n";
+        return falha();
+    }
+
+    // Fila de pedidos.
     int quantidadeClientes = 0;
     if (!(arquivo >> marcador) || marcador != "FILA" ||
         !(arquivo >> quantidadeClientes) ||
