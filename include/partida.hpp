@@ -14,6 +14,7 @@ struct Partida {
     int id;
     int turnoAtual;
     int pontuacao;
+    int pacienciaAtual;
     FilaEnc filaClientes;
     PilhaEnc hamburguer;
     Estoque e;
@@ -21,7 +22,7 @@ struct Partida {
 };
 
 void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId);
-void executarPartida(Partida& p);
+bool executarPartida(Partida& p);
 
 bool carregarPartida(Partida& p, const std::string& caminho);
 bool salvarPartida(const Partida& p, const std::string& caminho);

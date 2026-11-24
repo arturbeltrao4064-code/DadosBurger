@@ -7,7 +7,7 @@
 #include <fstream>
 
 bool carregarHistorico(std::ifstream& arquivo, ListaContDin& historico);
-
+bool salvarHistorico(const std::string& caminho, const PARTIDA& partida);
 
 NoAVL* carregarPedidos(const std::string& caminho, NoAVL* raiz);
 

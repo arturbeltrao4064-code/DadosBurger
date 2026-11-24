@@ -1,13 +1,17 @@
-
 #ifndef RECEITA_HPP
 #define RECEITA_HPP
-#include "pereciveis.hpp"
 
 #include <string>
 
+struct IngredienteReceita {
+    int cod;
+    std::string nome;
+    float preco;
+};
+
 struct NoReceita {
     NoReceita *prox;
-    Ingrediente dado;
+    IngredienteReceita dado;
 };
 
 struct ListaReceita {
@@ -16,9 +20,9 @@ struct ListaReceita {
 
 void inicializar(ListaReceita& lista);
 void imprimir(const ListaReceita& lista);
-Ingrediente buscar(const ListaReceita& lista, int cod);
-int inserirInicio(ListaReceita& lista, Ingrediente ingrediente);
-int inserirFim(ListaReceita& lista, Ingrediente ingrediente);
+IngredienteReceita buscar(const ListaReceita& lista, int cod);
+int inserirInicio(ListaReceita& lista, IngredienteReceita ingrediente);
+int inserirFim(ListaReceita& lista, IngredienteReceita ingrediente);
 int removerPorCod(ListaReceita& lista, int cod);
 void destruir(ListaReceita& lista);
 int tamanho(const ListaReceita& lista);
