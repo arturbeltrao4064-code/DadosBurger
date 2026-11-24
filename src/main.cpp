@@ -59,63 +59,79 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // --- Sua parte (loop principal do menu) ---
+    // Menu principal e integracao da partida.
     int estado = 0;
     Partida partida = {};
     bool partidaCarregada = false;
 
-
-    while (estado == 0 || estado == 1 || estado == 2 || estado == 3)
+    while (estado != 5)
     {
         if (estado == 0)
         {
-            std::cout << "Novo Jogo: Pressione [1]\nComo Jogar: Pressione [2]\nHistorico: Pressione [3]\n";
+            std::cout << "\n========== DADOS BURGER ==========\n";
+            std::cout << "[1] Novo jogo\n";
+            std::cout << "[2] Como jogar\n";
+            std::cout << "[3] Carregar partida\n";
+            std::cout << "[4] Historico\n";
+            std::cout << "[5] Sair\n";
+            std::cout << "Escolha: ";
             std::cin >> estado;
         }
+
         if (estado == 1)
         {
-            if (!partidaCarregada)
-            {
-                inicializarPartida(partida, raiz, 0);
-                partidaCarregada = false;
-
-                std::cout << "Nova partida inicializada!\n";
-            }
-
-            // Aguardando a finalização de executarPartida()
+            inicializarPartida(partida, raiz, partida.id);
+            partidaCarregada = false;
+            std::cout << "Nova partida inicializada!\n";
+            executarPartida(partida);
+            estado = 0;
         }
-        if (estado == 2)
+        else if (estado == 2)
         {
-            while (estado != 0)
-            {
-                std::cout << "Bem vindo ao Dados Burger!\nObjetivo: Atender todos os clientes sem que nenhum perca a paciencia.\n"
-                             "O jogo é baseado em turnos. Cada acao do jogador equivale a um turno.\n"
-                             "Cada cliente tem uma paciencia maxima, definida em numero de turnos.\n"
-                             "Os clientes sao organiazados em uma fila, e so e possivel atender o pedido do primeiro cliente da fila.\n"
-                             "Acoes do jogador que consomem 1 turno cada:\n"
-                             "[I]: Preparar ingrediente\n[A]: Adicionar ingrediente\n[R]: Remover ingrediente do topo do hamburguer.\n"
-                             "Acoes de consulta (nao consomem turnos):\n"
-                             "[E]: Ver estoque\n[P]: Ver pedido.\n"
-                             "Pressione [0] para voltar ao menu.\n";
-                std::cin >> estado;
-            }
+            std::cout << "\nObjetivo: atender todos os clientes antes que percam a paciencia.\n";
+            std::cout << "Cada cliente comeca com 5 turnos de paciencia.\n";
+            std::cout << "[I] prepara ingrediente; [A] adiciona ao hamburguer;\n";
+            std::cout << "[R] remove do topo; [M] entrega o pedido;\n";
+            std::cout << "[E] consulta estoque; [P] consulta pedido; [S] salva e volta ao menu.\n";
+            std::cout << "Digite 0 para voltar ao menu.\n";
+            std::cin >> estado;
+            if (estado != 0)
+                estado = 0;
         }
-        if (estado == 3)
+        else if (estado == 3)
         {
             if (carregarPartida(partida, "partida.txt"))
             {
                 std::cout << "Partida carregada com sucesso!\n";
                 partidaCarregada = true;
-                
-                estado = 1;
+                executarPartida(partida);
+                partidaCarregada = false;
             }
             else
             {
-                std::cout << "Erro ao carregar partida.\n";
-                estado = 0;
+                std::cout << "Nao foi possivel carregar a partida.\n";
             }
+            estado = 0;
+        }
+        else if (estado == 4)
+        {
+            std::cout << "\n========== HISTORICO ==========\n";
+            if (historico.tamanho == 0)
+                std::cout << "Ainda nao ha partidas registradas.\n";
+            for (int i = 0; i < historico.tamanho; ++i)
+            {
+                std::cout << i + 1 << ". " << historico.historico[i].nome_jogador
+                          << " - " << historico.historico[i].pontuacao << " pontos\n";
+            }
+            estado = 0;
+        }
+        else if (estado != 0 && estado != 5)
+        {
+            std::cout << "Opcao invalida.\n";
+            estado = 0;
         }
     }
+
     if (estado == 67)
     {
         std::cout << R"(.d8888b.       8888888888P
