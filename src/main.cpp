@@ -63,7 +63,6 @@ int main(int argc, char *argv[])
     int estado = 0;
     Partida partida = {};
     bool partidaCarregada = false;
-    bool partidaInicializada = false;
 
 
     while (estado == 0 || estado == 1 || estado == 2 || estado == 3)
@@ -78,7 +77,6 @@ int main(int argc, char *argv[])
             if (!partidaCarregada)
             {
                 inicializarPartida(partida, raiz, 0);
-                partidaInicializada = true;
                 partidaCarregada = false;
 
                 std::cout << "Nova partida inicializada!\n";
@@ -108,7 +106,6 @@ int main(int argc, char *argv[])
             {
                 std::cout << "Partida carregada com sucesso!\n";
                 partidaCarregada = true;
-                partidaInicializada = true;
                 
                 estado = 1;
             }
