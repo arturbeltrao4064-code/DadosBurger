@@ -12,7 +12,7 @@ bool estaVazia(const PilhaEnc& p) {
 }
 
 bool empilha(PilhaEnc& p, const Ingrediente& valor) {
-    NoPilha *novo = new (std::nothrow) NoPilha;
+    NoPilha *novo = new NoPilha;
 
     if (novo == nullptr)
         return false;
