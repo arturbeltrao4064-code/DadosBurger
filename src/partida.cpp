@@ -107,9 +107,9 @@ void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId) {
     p.e.tomate.turno_validade = 0;
     p.e.tomate.qnt = 0;
 
-    inicializarHeap(p.e.pereciveis[0], 'n', 100, 3);
-    inicializarHeap(p.e.pereciveis[1], 'o', 100, 3);
-    inicializarHeap(p.e.pereciveis[2], 'b', 100, 3);
+    inicializarHeap(p.e.pereciveis[0], 'n', 1000, 3);
+    inicializarHeap(p.e.pereciveis[1], 'o', 1000, 3);
+    inicializarHeap(p.e.pereciveis[2], 'b', 1000, 3);
     encInicializar(p.cache, 101);
 
     int menor = menorCodigo(pedidos);
@@ -152,6 +152,14 @@ bool executarPartida(Partida& p) {
         std::cout << "Pontuacao: " << p.pontuacao << "\n";
         std::cout << "Pedido: " << p.filaClientes.frente->dado.nome << "\n";
         std::cout << "Paciencia restante: " << p.pacienciaAtual << "\n";
+        std::cout << "Hamburguer (topo para base): ";
+        if (estaVazia(p.hamburguer)) std::cout << "(vazio)";
+        const NoPilha *parte = p.hamburguer.topo;
+        while (parte != nullptr) {
+            std::cout << parte->dado.comida << " ";
+            parte = parte->prox;
+        }
+        std::cout << "\n";
         std::cout << "[I] Preparar ingrediente\n";
         std::cout << "[A] Adicionar ingrediente\n";
         std::cout << "[R] Remover ingrediente do topo\n";
