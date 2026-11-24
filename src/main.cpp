@@ -233,7 +233,7 @@ int main(int argc, char *argv[]) {
         if (!(std::cin >> opcao)) {
             std::cin.clear();
             std::cin.ignore(10000, '\n');
-            opcao = 0;
+            opcao = -1;
             std::cout << "Digite uma opcao valida.\n";
             continue;
         }
