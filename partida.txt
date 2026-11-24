@@ -1,0 +1,28 @@
+DADOSBURGER_SAVE 3
+DADOS
+1 3 0 2
+FILA
+10
+8 "qbansoz"
+13 "oopnbqz"
+9 "kqsntqz"
+4 "oponcqz"
+1 "pbtmcnz"
+2 "nomosnz"
+8 "qbansoz"
+13 "oopnbqz"
+14 "nqkosnz"
+11 "qpnomaz"
+PILHA
+1
+b 4 1
+ESTOQUE
+s 0 0 q 0 1 c 0 0 t 0 0 
+HEAPS
+3
+n 3 10 0
+o 3 10 0
+b 3 10 0
+CACHE
+11 0
+FIM
