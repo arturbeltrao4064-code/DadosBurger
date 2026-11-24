@@ -36,14 +36,14 @@ int main() {
     enfileira(original.filaClientes, p2);
 
     // Pilha
-    IngredientePilha i1 = {1, "Pao", 2.5f};
-    IngredientePilha i2 = {2, "Carne", 8.0f};
+    IngredientePilha i1 = {1};
+    IngredientePilha i2 = {2};
 
     empilha(original.hamburguer, i1);
     empilha(original.hamburguer, i2);
 
     // Heap
-    ingrediente perecivel = {0};
+    ingrediente perecivel = {'B', 4};
     inserir(original.e.pereciveis, perecivel, 4);
 
     // Cache
@@ -127,10 +127,7 @@ int main() {
 
     while (pilhaOriginal != nullptr && pilhaRecuperada != nullptr) {
 
-        if (pilhaOriginal->dado.cod != pilhaRecuperada->dado.cod ||
-            pilhaOriginal->dado.nome != pilhaRecuperada->dado.nome ||
-            pilhaOriginal->dado.preco != pilhaRecuperada->dado.preco) {
-
+        if (pilhaOriginal->dado.cod != pilhaRecuperada->dado.cod) {
             dadosCorretos = false;
         }
 
@@ -153,8 +150,10 @@ int main() {
 
     for (int i = 0; i < original.e.pereciveis.tamanho; i++) {
 
-        if (recuperada.e.pereciveis.vetor[i].turno_validade !=
-            original.e.pereciveis.vetor[i].turno_validade) {
+        if (recuperada.e.pereciveis.vetor[i].comida !=
+                original.e.pereciveis.vetor[i].comida ||
+            recuperada.e.pereciveis.vetor[i].turno_validade !=
+                original.e.pereciveis.vetor[i].turno_validade) {
 
             dadosCorretos = false;
         }
