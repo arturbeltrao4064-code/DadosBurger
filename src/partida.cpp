@@ -106,7 +106,7 @@ bool executarPartida(Partida& p) {
         }
         else if (jogando == 'A') {
             char ingrediente;
-            Ingrediente adicionar = {'\\0', 0, 0};
+            Ingrediente adicionar = {'\0', 0, 0};
             bool disponivel = false;
             std::cout << "Adicionar: [S] queijo suico, [Q] cheddar, [C] cebola, [T] tomate, [N] carne, [O] ovo, [B] bacon: ";
             std::cin >> ingrediente;
@@ -120,7 +120,7 @@ bool executarPartida(Partida& p) {
                 int indice = ingrediente == 'n' ? 0 : (ingrediente == 'o' ? 1 : 2);
                 if (!estaVazio(p.e.pereciveis[indice])) {
                     adicionar = remover_min(p.e.pereciveis[indice]);
-                    disponivel = adicionar.comida != '\\0';
+                    disponivel = adicionar.comida != '\0';
                 }
             }
 
