@@ -120,10 +120,16 @@ bool executarPartida(Partida& p) {
             else if (ingrediente == 'c' && p.e.cebola.qnt > 0) { adicionar = p.e.cebola; disponivel = true; }
             else if (ingrediente == 't' && p.e.tomate.qnt > 0) { adicionar = p.e.tomate; disponivel = true; }
             else if (ingrediente == 'n' || ingrediente == 'o' || ingrediente == 'b') {
-                int indice = ingrediente == 'n' ? 0 : (ingrediente == 'o' ? 1 : 2);
+                int indice;
+                if(ingrediente == 'n') indice = 0;
+                if(ingrediente == 'o') indice = 1;
+                if(ingrediente == 'b') indice = 2;
                 if (!estaVazio(p.e.pereciveis[indice])) {
                     adicionar = remover_min(p.e.pereciveis[indice]);
-                    disponivel = adicionar.comida != '\0';
+                    if(adicionar.comida != '\0')
+                        disponivel = true;
+                    else
+                        disponivel = false;
                 }
             }
 
@@ -189,10 +195,10 @@ bool executarPartida(Partida& p) {
         p.turnoAtual++;
         p.pacienciaAtual--;
 
-        for (int indice = 0; indice < 3; ++indice) {
-            while (!estaVazio(p.e.pereciveis[indice]) &&
-                   p.e.pereciveis[indice].vetor[0].turno_validade < p.turnoAtual) {
-                remover_min(p.e.pereciveis[indice]);
+        for (int i = 0; i < 3; ++i) {
+            while (!estaVazio(p.e.pereciveis[i]) &&
+                   p.e.pereciveis[i].vetor[0].turno_validade < p.turnoAtual) {
+                remover_min(p.e.pereciveis[i]);
             }
         }
 
