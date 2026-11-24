@@ -60,18 +60,18 @@ int tamanho(const PilhaEnc& p) {
     return contador;
 }
 
-void printaEstoque(Estoque& e){
+void printaEstoque(Estoque& e) {
     std::cout << "Estoque atual:\n";
-    std::cout << "Ketchup: infinito\\n";
-    std::cout << "Mostarda: infinito\\n";
-    std::cout << "Picles: infinito\\n";
-    std::cout << "Alface: infinito\\n";
-    std::cout << "Pao de cima: infinito\\n";
-    std::cout << "Queijo suico:" << e.queijo_suico.qnt << '\n';
-    std::cout << "Queijo cheddar:" << e.cheddar.qnt << '\n';
-    std::cout << "Cebola:" << e.cebola.qnt << '\n';
-    std::cout << "Tomate:" << e.tomate.qnt << '\n';
-    std::cout << "Carne:" << e.pereciveis[0].tamanho << '\n';
-    std::cout << "Ovo frito:" << e.pereciveis[1].tamanho << '\n';
-    std::cout << "Bacon:" << e.pereciveis[2].tamanho << '\n';
+    std::cout << "Ketchup: infinito\n";
+    std::cout << "Mostarda: infinito\n";
+    std::cout << "Picles: infinito\n";
+    std::cout << "Alface: infinito\n";
+    std::cout << "Pao de cima: infinito\n";
+    std::cout << "Queijo suico: " << e.queijo_suico.qnt << '\n';
+    std::cout << "Queijo cheddar: " << e.cheddar.qnt << '\n';
+    std::cout << "Cebola: " << e.cebola.qnt << '\n';
+    std::cout << "Tomate: " << e.tomate.qnt << '\n';
+    std::cout << "Carne: " << e.pereciveis[0].tamanho << '\n';
+    std::cout << "Ovo frito: " << e.pereciveis[1].tamanho << '\n';
+    std::cout << "Bacon: " << e.pereciveis[2].tamanho << '\n';
 }
