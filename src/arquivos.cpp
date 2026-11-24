@@ -1,4 +1,5 @@
 #include "arquivos.hpp"
+#include "receita.hpp"
 #include <iostream>
 #include <string>
 
@@ -59,6 +60,22 @@ NoAVL* carregarPedidos(const std::string& caminho, NoAVL* raiz) {
         Pedido novoProduto;
         novoProduto.cod = codigo;
         novoProduto.nome = linhaReceita;
+        inicializar(novoProduto.receita);
+
+        bool receitaCarregada = true;
+        for (int i = 0; i < (int)linhaReceita.size(); i++) {
+            if (!inserirFim(novoProduto.receita, linhaReceita[i])) {
+                receitaCarregada = false;
+                break;
+            }
+        }
+
+        if (!receitaCarregada) {
+            destruir(novoProduto.receita);
+            std::cerr << "Nao foi possivel armazenar a receita do pedido.\\n";
+            continue;
+        }
+
         raiz = Inserir(raiz, novoProduto);
     }
 
