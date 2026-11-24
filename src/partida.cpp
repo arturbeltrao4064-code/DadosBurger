@@ -11,7 +11,7 @@ void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId) {
     p.id = maiorId + 1;
     p.turnoAtual = 0;
     p.pontuacao = 0;
-    p.pacienciaAtual = 5;
+    p.pacienciaAtual = 15;
 
     p.e.queijo_suico = {'s', 0, 0};
     p.e.cheddar = {'q', 0, 0};
@@ -72,7 +72,7 @@ void executarPartida(Partida& p) {
         if (jogando == 'P') {
             std::cout << "Pedido atual: " << p.filaClientes.frente->dado.nome << '\n';
             std::cout << "Codigo da receita: " << p.filaClientes.frente->dado.cod << '\n';
-            std::cout << "Paciencia: " << p.pacienciaAtual << "/5\n";
+            std::cout << "Paciencia: " << p.pacienciaAtual << "/15\n";
             jogando = 'J';
             continue;
         }
@@ -164,7 +164,7 @@ void executarPartida(Partida& p) {
             while (desempilha(p.hamburguer, removido)) {}
             p.pontuacao += 100;
             p.turnoAtual++;
-            p.pacienciaAtual = 5;
+            p.pacienciaAtual = 15;
             std::cout << "Pedido de " << atendido.nome << " entregue! +100 pontos.\n";
 
             if (estaVazia(p.filaClientes)) {
