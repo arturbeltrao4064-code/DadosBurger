@@ -1,5 +1,4 @@
 #include "avl.hpp"
-#include <algorithm>
 
 int totalrotacoes = 0;
 int totalNosInseridos = 0;
