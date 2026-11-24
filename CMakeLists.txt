@@ -28,7 +28,6 @@ target_include_directories(dado_burger PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-
 if(MSVC)
     target_compile_options(dado_burger PRIVATE /W4)
 else()
