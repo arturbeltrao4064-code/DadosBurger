@@ -24,7 +24,7 @@ void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId) {
     encInicializar(p.cache, 11);
 
     for (int i = 0; i < CLIENTES; i++) {
-        int x = std::rand() % 87000;
+        int x = std::rand() % 15 + 1;
         const NoAVL* tmp = Buscar(pedidos, x);
         if (tmp != nullptr)
             enfileira(p.filaClientes, tmp->prod);
