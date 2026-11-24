@@ -4,21 +4,17 @@
 #include "pereciveis.hpp"
 #include <string>
 
-struct IngredientePilha {
-    int cod;
-};
-
 struct Estoque{
-    heap pereciveis;
-    int queijo_suico;
-    int cheddar;
-    int cebola;
-    int tomate;
+    heap pereciveis[3];
+    Ingrediente queijo_suico;
+    Ingrediente cheddar;
+    Ingrediente cebola;
+    Ingrediente tomate;
 };
 
 struct NoPilha {
     NoPilha *prox;
-    IngredientePilha dado;
+    Ingrediente dado;
 };
 
 struct PilhaEnc {
@@ -27,9 +23,10 @@ struct PilhaEnc {
 
 void inicializa(PilhaEnc& p);
 bool estaVazia(const PilhaEnc& p);
-bool empilha(PilhaEnc& p, const IngredientePilha& valor);
-bool desempilha(PilhaEnc& p, IngredientePilha& valorRemovido);
-bool topo(const PilhaEnc& p, IngredientePilha& valor);
+bool empilha(PilhaEnc& p, const Ingrediente& valor);
+bool desempilha(PilhaEnc& p, Ingrediente& valorRemovido);
+bool topo(const PilhaEnc& p, Ingrediente& valor);
 int tamanho(const PilhaEnc& p);
 
+void printaEstoque(Estoque& e);
 #endif

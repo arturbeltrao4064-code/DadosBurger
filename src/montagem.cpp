@@ -1,5 +1,6 @@
 
 #include <new>
+#include <iostream>
 #include "montagem.hpp"
 
 void inicializa(PilhaEnc& p) {
@@ -10,7 +11,7 @@ bool estaVazia(const PilhaEnc& p) {
     return p.topo == nullptr;
 }
 
-bool empilha(PilhaEnc& p, const IngredientePilha& valor) {
+bool empilha(PilhaEnc& p, const Ingrediente& valor) {
     NoPilha *novo = new (std::nothrow) NoPilha;
 
     if (novo == nullptr)
@@ -24,7 +25,7 @@ bool empilha(PilhaEnc& p, const IngredientePilha& valor) {
     return true;
 }
 
-bool desempilha(PilhaEnc& p, IngredientePilha& valorRemovido) {
+bool desempilha(PilhaEnc& p, Ingrediente& valorRemovido) {
     if (estaVazia(p))
         return false;
 
@@ -38,7 +39,7 @@ bool desempilha(PilhaEnc& p, IngredientePilha& valorRemovido) {
     return true;
 }
 
-bool topo(const PilhaEnc& p, IngredientePilha& valor) {
+bool topo(const PilhaEnc& p, Ingrediente& valor) {
     if (estaVazia(p))
         return false;
 
@@ -57,4 +58,15 @@ int tamanho(const PilhaEnc& p) {
     }
 
     return contador;
+}
+
+void printaEstoque(Estoque& e){
+    std::cout << "Estoque atual:\n";
+    std::cout << "Queijo suico:" << e.queijo_suico.qnt << '\n';
+    std::cout << "Queijo cheddar:" << e.cheddar.qnt << '\n';
+    std::cout << "Cebola:" << e.cebola.qnt << '\n';
+    std::cout << "Tomate:" << e.tomate.qnt << '\n';
+    std::cout << "Carne:" << e.pereciveis[0].tamanho << 'n';
+    std::cout << "Ovo frito:" << e.pereciveis[1].tamanho << 'n';
+    std::cout << "Bacon:" << e.pereciveis[2].tamanho << 'n';
 }
