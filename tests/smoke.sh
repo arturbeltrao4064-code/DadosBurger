@@ -5,7 +5,7 @@ printf '1\nnkmpz\n' > pedidos_teste.txt
 : > historico_teste.txt
 
 {
-    printf '1\\n'
+    printf '1\n'
     for i in {1..10}; do
         printf 'I\nn\nA\nn\nA\nk\nA\nm\nA\np\nA\nz\n'
     done
