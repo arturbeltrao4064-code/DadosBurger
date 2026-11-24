@@ -63,6 +63,8 @@ int main(int argc, char *argv[])
     int estado = 0;
     Partida partida = {};
     bool partidaCarregada = false;
+    bool partidaInicializada = false;
+
 
     while (estado == 0 || estado == 1 || estado == 2 || estado == 3)
     {
@@ -73,6 +75,16 @@ int main(int argc, char *argv[])
         }
         if (estado == 1)
         {
+            if (!partidaCarregada)
+            {
+                inicializarPartida(partida, raiz, 0);
+                partidaInicializada = true;
+                partidaCarregada = false;
+
+                std::cout << "Nova partida inicializada!\n";
+            }
+
+            // Aguardando a finalização de executarPartida()
         }
         if (estado == 2)
         {
@@ -95,6 +107,9 @@ int main(int argc, char *argv[])
             if (carregarPartida(partida, "partida.txt"))
             {
                 std::cout << "Partida carregada com sucesso!\n";
+                partidaCarregada = true;
+                partidaInicializada = true;
+                
                 estado = 1;
             }
             else
@@ -112,10 +127,9 @@ int main(int argc, char *argv[])
        888d888b.           d88P
        888P "Y88b         d88P
        888    888        d88P
-       Y88b  d88P       d88P
+       Y88b  d88P       d88Px
         "Y8888P"       d88P)";
     }
 
-
-return 0;
+    return 0;
 }

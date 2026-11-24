@@ -8,13 +8,16 @@
 // Verifica se um nome pode ser gravado no formato atual.
 // O carregador atual le nomes usando operador >>,
 // portanto nomes com espacos nao sao suportados.
-bool nomeValidoParaArquivo(const std::string& nome) {
+bool nomeValidoParaArquivo(const std::string &nome)
+{
     if (nome.empty())
         return false;
 
-    for (int i = 0; nome[i] != '\0'; i++) {
+    for (int i = 0; nome[i] != '\0'; i++)
+    {
         if (nome[i] == ' ' || nome[i] == '\t' ||
-            nome[i] == '\n' || nome[i] == '\r') {
+            nome[i] == '\n' || nome[i] == '\r')
+        {
             return false;
         }
     }
@@ -22,11 +25,13 @@ bool nomeValidoParaArquivo(const std::string& nome) {
     return true;
 }
 
-bool salvarPartida(const Partida& p, const std::string& caminho) {
+bool salvarPartida(const Partida &p, const std::string &caminho)
+{
 
     std::ofstream arquivo(caminho.c_str());
 
-    if (!arquivo.is_open()) {
+    if (!arquivo.is_open())
+    {
         std::cerr << "Erro ao abrir o arquivo para salvar a partida.\n";
         return false;
     }
@@ -44,10 +49,12 @@ bool salvarPartida(const Partida& p, const std::string& caminho) {
     arquivo << "FILA\n";
 
     int quantidadeClientes = 0;
-    const NoFila* cliente = p.filaClientes.frente;
+    const NoFila *cliente = p.filaClientes.frente;
 
-    while (cliente != nullptr) {
-        if (!nomeValidoParaArquivo(cliente->dado.nome)) {
+    while (cliente != nullptr)
+    {
+        if (!nomeValidoParaArquivo(cliente->dado.nome))
+        {
             std::cerr << "Nome de pedido invalido para o formato atual.\n";
             arquivo.close();
             return false;
@@ -61,7 +68,8 @@ bool salvarPartida(const Partida& p, const std::string& caminho) {
 
     cliente = p.filaClientes.frente;
 
-    while (cliente != nullptr) {
+    while (cliente != nullptr)
+    {
         arquivo << cliente->dado.cod << ' '
                 << cliente->dado.nome << '\n';
 
@@ -72,15 +80,10 @@ bool salvarPartida(const Partida& p, const std::string& caminho) {
     arquivo << "PILHA\n";
 
     int quantidadeIngredientes = 0;
-    const NoPilha* ingrediente = p.hamburguer.topo;
+    const NoPilha *ingrediente = p.hamburguer.topo;
 
-    while (ingrediente != nullptr) {
-        if (!nomeValidoParaArquivo(ingrediente->dado.nome)) {
-            std::cerr << "Nome de ingrediente invalido para o formato atual.\n";
-            arquivo.close();
-            return false;
-        }
-
+    while (ingrediente != nullptr)
+    {
         quantidadeIngredientes++;
         ingrediente = ingrediente->prox;
     }
@@ -90,10 +93,9 @@ bool salvarPartida(const Partida& p, const std::string& caminho) {
     // Grava do topo para a base.
     ingrediente = p.hamburguer.topo;
 
-    while (ingrediente != nullptr) {
-        arquivo << ingrediente->dado.cod << ' '
-                << ingrediente->dado.nome << ' '
-                << ingrediente->dado.preco << '\n';
+    while (ingrediente != nullptr)
+    {
+        arquivo << ingrediente->dado.cod << '\n';
 
         ingrediente = ingrediente->prox;
     }
@@ -107,12 +109,13 @@ bool salvarPartida(const Partida& p, const std::string& caminho) {
             << p.e.tomate << '\n';
 
     // 6. Heap de pereciveis.
-    const heap& h = p.e.pereciveis;
+    const heap &h = p.e.pereciveis;
 
     if (h.tamanho < 0 ||
         h.capacidade < 0 ||
         h.tamanho > h.capacidade ||
-        (h.tamanho > 0 && h.vetor == nullptr)) {
+        (h.tamanho > 0 && h.vetor == nullptr))
+    {
 
         std::cerr << "Estado invalido do heap de pereciveis.\n";
         arquivo.close();
@@ -128,15 +131,18 @@ bool salvarPartida(const Partida& p, const std::string& caminho) {
 
     // Gravamos as validades armazenadas no vetor.
     // O carregador reconstruira a propriedade de heap.
-    for (int i = 0; i < h.tamanho; i++) {
-        arquivo << h.vetor[i].turno_validade << '\n';
+    for (int i = 0; i < h.tamanho; i++)
+    {
+        arquivo << h.vetor[i].comida << ' '
+                << h.vetor[i].turno_validade << '\n';
     }
 
     // 7. Cache.
-    const TabelaEnc& tabela = p.cache;
+    const TabelaEnc &tabela = p.cache;
 
     if (tabela.m < 0 || tabela.n < 0 ||
-        (tabela.m > 0 && tabela.tabela == nullptr)) {
+        (tabela.m > 0 && tabela.tabela == nullptr))
+    {
 
         std::cerr << "Estado invalido do cache.\n";
         arquivo.close();
@@ -146,11 +152,14 @@ bool salvarPartida(const Partida& p, const std::string& caminho) {
     arquivo << "CACHE\n";
     arquivo << tabela.m << ' ' << tabela.n << '\n';
 
-    if (tabela.tabela != nullptr) {
-        for (int i = 0; i < tabela.m; i++) {
-            const No* atual = tabela.tabela[i];
+    if (tabela.tabela != nullptr)
+    {
+        for (int i = 0; i < tabela.m; i++)
+        {
+            const No *atual = tabela.tabela[i];
 
-            while (atual != nullptr) {
+            while (atual != nullptr)
+            {
                 arquivo << atual->chave << ' '
                         << atual->valor << '\n';
 
@@ -162,7 +171,8 @@ bool salvarPartida(const Partida& p, const std::string& caminho) {
     // 8. Marcador de final.
     arquivo << "FIM\n";
 
-    if (!arquivo.good()) {
+    if (!arquivo.good())
+    {
         std::cerr << "Erro durante a escrita do arquivo.\n";
         arquivo.close();
         return false;

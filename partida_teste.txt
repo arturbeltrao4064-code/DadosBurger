@@ -7,13 +7,13 @@ FILA
 205 Queijo
 PILHA
 2
-2 Carne 8
-1 Pao 2.5
+2
+1
 ESTOQUE
 10 15 20 25
 HEAP
 B 5 10 1
-9
+B 9
 CACHE
 11 1
 10 500
