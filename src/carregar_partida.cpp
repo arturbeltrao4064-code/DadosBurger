@@ -1,80 +1,74 @@
-
-
 #include "partida.hpp"
 
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 #include <string>
 
-// Libera os elementos da fila temporaria.
-void limparFilaCarregamento(FilaEnc &fila)
+namespace
 {
-    Pedido pedido;
-
-    while (desenfileira(fila, pedido))
-    {
-    }
+bool quantidadeValida(int quantidade)
+{
+    return quantidade >= 0 && quantidade <= 1000000;
 }
 
-// Libera os elementos da pilha temporaria.
-void limparPilhaCarregamento(PilhaEnc &pilha)
+void limparFila(FilaEnc &fila)
 {
-    IngredientePilha ingrediente;
-
-    while (desempilha(pilha, ingrediente))
-    {
-    }
+    Pedido removido;
+    while (desenfileira(fila, removido)) {}
 }
 
-// Libera a tabela de hash temporaria.
-void limparCacheCarregamento(TabelaEnc &tabela)
+void limparPilha(PilhaEnc &pilha)
 {
-    if (tabela.tabela == nullptr)
-    {
-        tabela.m = 0;
-        tabela.n = 0;
-        return;
-    }
+    Ingrediente removido;
+    while (desempilha(pilha, removido)) {}
+}
 
-    for (int i = 0; i < tabela.m; i++)
+void limparCache(TabelaEnc &tabela)
+{
+    if (tabela.tabela != nullptr)
     {
-        No *atual = tabela.tabela[i];
-
-        while (atual != nullptr)
+        for (int i = 0; i < tabela.m; ++i)
         {
-            No *proximo = atual->prox;
-            delete atual;
-            atual = proximo;
+            No *atual = tabela.tabela[i];
+            while (atual != nullptr)
+            {
+                No *proximo = atual->prox;
+                delete atual;
+                atual = proximo;
+            }
         }
+        delete[] tabela.tabela;
     }
-
-    delete[] tabela.tabela;
 
     tabela.tabela = nullptr;
     tabela.m = 0;
     tabela.n = 0;
 }
 
-// Libera todos os dados da partida temporaria.
-void limparPartidaCarregamento(Partida &partida)
+void limparPartida(Partida &partida)
 {
-    limparFilaCarregamento(partida.filaClientes);
-    limparPilhaCarregamento(partida.hamburguer);
-    destruirHeap(partida.e.pereciveis);
-    limparCacheCarregamento(partida.cache);
+    limparFila(partida.filaClientes);
+    limparPilha(partida.hamburguer);
+
+    for (int i = 0; i < 3; ++i)
+        destruirHeap(partida.e.pereciveis[i]);
+
+    limparCache(partida.cache);
 }
 
-// Verifica se uma quantidade lida do arquivo e valida.
-bool quantidadeValidaCarregamento(int quantidade)
+bool lerIngrediente(std::istream &arquivo, Ingrediente &ingrediente)
 {
-    return quantidade >= 0 && quantidade <= 1000000;
+    return static_cast<bool>(
+        arquivo >> ingrediente.comida
+                >> ingrediente.turno_validade
+                >> ingrediente.qnt);
+}
 }
 
 bool carregarPartida(Partida &p, const std::string &caminho)
 {
-
     std::ifstream arquivo(caminho.c_str());
-
     if (!arquivo.is_open())
     {
         std::cerr << "Erro ao abrir o arquivo da partida.\n";
@@ -82,225 +76,203 @@ bool carregarPartida(Partida &p, const std::string &caminho)
     }
 
     Partida temp = {};
-
     inicializa(temp.filaClientes);
     inicializa(temp.hamburguer);
 
-    std::string marcador;
-    int versao;
-
-    // 1. Identificacao do arquivo.
-    if (!(arquivo >> marcador >> versao) ||
-        marcador != "DADOSBURGER_SAVE" ||
-        versao != 1)
-    {
-
-        std::cerr << "Arquivo invalido ou versao desconhecida.\n";
+    auto falha = [&]() {
+        limparPartida(temp);
         return false;
+    };
+
+    std::string marcador;
+    int versao = 0;
+
+    if (!(arquivo >> marcador >> versao) ||
+        marcador != "DADOSBURGER_SAVE" || versao != 2)
+    {
+        std::cerr << "Arquivo invalido ou versao de salvamento desconhecida.\n";
+        return falha();
     }
 
-    // 2. Dados principais.
     if (!(arquivo >> marcador) || marcador != "DADOS" ||
         !(arquivo >> temp.id >> temp.turnoAtual >> temp.pontuacao))
     {
-
-        std::cerr << "Erro ao ler os dados da partida.\n";
-        return false;
+        std::cerr << "Erro ao ler os dados principais da partida.\n";
+        return falha();
     }
 
-    // 3. Fila de clientes.
-    int quantidadeClientes;
-
+    // Fila de pedidos.
+    int quantidadeClientes = 0;
     if (!(arquivo >> marcador) || marcador != "FILA" ||
         !(arquivo >> quantidadeClientes) ||
-        !quantidadeValidaCarregamento(quantidadeClientes))
+        !quantidadeValida(quantidadeClientes))
     {
-
         std::cerr << "Erro ao ler a fila de clientes.\n";
-        return false;
+        return falha();
     }
 
-    for (int i = 0; i < quantidadeClientes; i++)
+    for (int i = 0; i < quantidadeClientes; ++i)
     {
-
         Pedido pedido;
-
-        if (!(arquivo >> pedido.cod >> pedido.nome))
+        if (!(arquivo >> pedido.cod >> std::quoted(pedido.nome)) ||
+            pedido.nome.empty() || !enfileira(temp.filaClientes, pedido))
         {
-            std::cerr << "Erro ao ler um pedido.\n";
-            limparPartidaCarregamento(temp);
-            return false;
-        }
-
-        if (!enfileira(temp.filaClientes, pedido))
-        {
-            std::cerr << "Erro ao reconstruir a fila.\n";
-            limparPartidaCarregamento(temp);
-            return false;
+            std::cerr << "Erro ao reconstruir um pedido da fila.\n";
+            return falha();
         }
     }
 
-    // 4. Pilha do hamburguer.
-    int quantidadeIngredientes;
-
+    // Pilha: arquivo em ordem topo-base; a pilha auxiliar restaura a ordem.
+    int quantidadeIngredientes = 0;
     if (!(arquivo >> marcador) || marcador != "PILHA" ||
         !(arquivo >> quantidadeIngredientes) ||
-        !quantidadeValidaCarregamento(quantidadeIngredientes))
+        !quantidadeValida(quantidadeIngredientes))
     {
-
-        std::cerr << "Erro ao ler a pilha.\n";
-        limparPartidaCarregamento(temp);
-        return false;
+        std::cerr << "Erro ao ler a pilha de ingredientes.\n";
+        return falha();
     }
 
-    // Usamos uma segunda pilha temporaria para preservar a ordem.
     PilhaEnc auxiliar;
     inicializa(auxiliar);
 
-    for (int i = 0; i < quantidadeIngredientes; i++)
+    for (int i = 0; i < quantidadeIngredientes; ++i)
     {
-
-        IngredientePilha ingrediente;
-
-        if (!(arquivo >> ingrediente.cod))
+        Ingrediente ingrediente;
+        if (!lerIngrediente(arquivo, ingrediente) ||
+            !empilha(auxiliar, ingrediente))
         {
-
-            std::cerr << "Erro ao ler um ingrediente.\n";
-            limparPilhaCarregamento(auxiliar);
-            limparPartidaCarregamento(temp);
-            return false;
-        }
-
-        if (!empilha(auxiliar, ingrediente))
-        {
-            std::cerr << "Erro ao reconstruir a pilha auxiliar.\n";
-            limparPilhaCarregamento(auxiliar);
-            limparPartidaCarregamento(temp);
-            return false;
+            limparPilha(auxiliar);
+            std::cerr << "Erro ao ler ingrediente da pilha.\n";
+            return falha();
         }
     }
 
-    // Transfere os ingredientes para a pilha definitiva.
-    // Isso preserva a ordem original armazenada no arquivo.
-    IngredientePilha ingrediente;
-
+    Ingrediente ingrediente;
     while (desempilha(auxiliar, ingrediente))
     {
-
         if (!empilha(temp.hamburguer, ingrediente))
         {
-            std::cerr << "Erro ao reconstruir a pilha do hamburguer.\n";
-            limparPilhaCarregamento(auxiliar);
-            limparPartidaCarregamento(temp);
-            return false;
+            limparPilha(auxiliar);
+            std::cerr << "Erro ao reconstruir a pilha.\n";
+            return falha();
         }
     }
 
-    // 5. Estoque.
+    // Quatro ingredientes fixos do estoque.
     if (!(arquivo >> marcador) || marcador != "ESTOQUE" ||
-        !(arquivo >> temp.e.queijo_suico >> temp.e.cheddar >> temp.e.cebola >> temp.e.tomate))
+        !lerIngrediente(arquivo, temp.e.queijo_suico) ||
+        !lerIngrediente(arquivo, temp.e.cheddar) ||
+        !lerIngrediente(arquivo, temp.e.cebola) ||
+        !lerIngrediente(arquivo, temp.e.tomate))
     {
-
-        std::cerr << "Erro ao ler o estoque.\n";
-        limparPartidaCarregamento(temp);
-        return false;
+        std::cerr << "Erro ao ler os ingredientes fixos do estoque.\n";
+        return falha();
     }
 
-    // 6. Heap de pereciveis.
-    char comida;
-    int validadeConfig;
-    int capacidade;
-    int tamanhoHeap;
-
-    if (!(arquivo >> marcador) || marcador != "HEAP" ||
-        !(arquivo >> comida >> validadeConfig >> capacidade >> tamanhoHeap) ||
-        capacidade <= 0 ||
-        tamanhoHeap < 0 ||
-        tamanhoHeap > capacidade)
+    // Os tres heaps de pereciveis.
+    int quantidadeHeaps = 0;
+    if (!(arquivo >> marcador) || marcador != "HEAPS" ||
+        !(arquivo >> quantidadeHeaps) || quantidadeHeaps != 3)
     {
-
-        std::cerr << "Erro ao ler os dados do heap.\n";
-        limparPartidaCarregamento(temp);
-        return false;
+        std::cerr << "Arquivo nao contem os tres heaps esperados.\n";
+        return falha();
     }
 
-    inicializarHeap(temp.e.pereciveis,
-                    comida,
-                    capacidade,
-                    validadeConfig);
-
-    if (temp.e.pereciveis.vetor == nullptr)
+    for (int indice = 0; indice < 3; ++indice)
     {
-        std::cerr << "Erro ao alocar o heap.\n";
-        limparPartidaCarregamento(temp);
-        return false;
-    }
+        char comida;
+        int validadeConfig = 0;
+        int capacidade = 0;
+        int tamanhoHeap = 0;
 
-    // Recupera as validades sem recalcula-las.
-    // Recupera a comida e a validade de cada ingrediente.
-    for (int i = 0; i < tamanhoHeap; i++)
-    {
-
-        if (!(arquivo >> temp.e.pereciveis.vetor[i].comida >> temp.e.pereciveis.vetor[i].turno_validade))
+        if (!(arquivo >> comida >> validadeConfig >> capacidade >> tamanhoHeap) ||
+            capacidade < 0 || capacidade > 1000000 ||
+            !quantidadeValida(tamanhoHeap) || tamanhoHeap > capacidade)
         {
-            std::cerr << "Erro ao ler um ingrediente do heap.\n";
-            limparPartidaCarregamento(temp);
-            return false;
+            std::cerr << "Cabecalho de heap invalido.\n";
+            return falha();
         }
-    }
-    temp.e.pereciveis.tamanho = tamanhoHeap;
-    buildHeap(temp.e.pereciveis);
 
-    // 7. Cache.
-    int capacidadeCache;
-    int quantidadeCache;
+        heap &h = temp.e.pereciveis[indice];
+
+        if (capacidade > 0)
+        {
+            inicializarHeap(h, comida, capacidade, validadeConfig);
+            if (h.vetor == nullptr || h.capacidade < capacidade)
+            {
+                std::cerr << "Falha ao alocar heap de pereciveis.\n";
+                return falha();
+            }
+        }
+        else
+        {
+            h.comida = comida;
+            h.validade_config = validadeConfig;
+            h.capacidade = 0;
+            h.tamanho = 0;
+            h.vetor = nullptr;
+        }
+
+        for (int i = 0; i < tamanhoHeap; ++i)
+        {
+            if (!lerIngrediente(arquivo, h.vetor[i]))
+            {
+                std::cerr << "Erro ao ler elemento do heap.\n";
+                return falha();
+            }
+        }
+
+        h.tamanho = tamanhoHeap;
+        if (h.tamanho > 0)
+            buildHeap(h);
+    }
+
+    // Cache: valida a quantidade de pares e reconstrui por insercao.
+    int capacidadeCache = 0;
+    int quantidadeCache = 0;
 
     if (!(arquivo >> marcador) || marcador != "CACHE" ||
         !(arquivo >> capacidadeCache >> quantidadeCache) ||
-        capacidadeCache < 0 ||
-        !quantidadeValidaCarregamento(quantidadeCache) ||
+        capacidadeCache < 0 || capacidadeCache > 1000000 ||
+        !quantidadeValida(quantidadeCache) ||
         (capacidadeCache == 0 && quantidadeCache != 0))
     {
-
-        std::cerr << "Erro ao ler o cache.\n";
-        limparPartidaCarregamento(temp);
-        return false;
+        std::cerr << "Cabecalho de cache invalido.\n";
+        return falha();
     }
 
     if (capacidadeCache > 0)
-    {
-
         encInicializar(temp.cache, capacidadeCache);
 
-        for (int i = 0; i < quantidadeCache; i++)
+    for (int i = 0; i < quantidadeCache; ++i)
+    {
+        int chave = 0;
+        int valor = 0;
+        if (!(arquivo >> chave >> valor) || capacidadeCache == 0)
         {
-
-            int chave;
-            int valor;
-
-            if (!(arquivo >> chave >> valor))
-            {
-                std::cerr << "Erro ao ler um elemento do cache.\n";
-                limparPartidaCarregamento(temp);
-                return false;
-            }
-
-            encInserir(temp.cache, chave, valor);
+            std::cerr << "Erro ao ler elemento do cache.\n";
+            return falha();
         }
+        encInserir(temp.cache, chave, valor);
     }
 
-    // 8. Final do arquivo.
     if (!(arquivo >> marcador) || marcador != "FIM")
     {
         std::cerr << "Arquivo de partida incompleto.\n";
-        limparPartidaCarregamento(temp);
-        return false;
+        return falha();
     }
 
-    arquivo.close();
-
-    // Transfere os dados reconstruidos para a partida recebida.
+    // A partida antiga so e liberada depois que a nova foi lida por completo.
+    limparPartida(p);
     p = temp;
+
+    // Evita que os ponteiros transferidos sejam liberados ao sair desta funcao.
+    temp.filaClientes = {};
+    temp.hamburguer = {};
+    temp.cache = {};
+    temp.e.pereciveis[0] = {};
+    temp.e.pereciveis[1] = {};
+    temp.e.pereciveis[2] = {};
 
     return true;
 }
