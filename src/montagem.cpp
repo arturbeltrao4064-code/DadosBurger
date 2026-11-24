@@ -62,6 +62,11 @@ int tamanho(const PilhaEnc& p) {
 
 void printaEstoque(Estoque& e){
     std::cout << "Estoque atual:\n";
+    std::cout << "Ketchup: infinito\\n";
+    std::cout << "Mostarda: infinito\\n";
+    std::cout << "Picles: infinito\\n";
+    std::cout << "Alface: infinito\\n";
+    std::cout << "Pao de cima: infinito\\n";
     std::cout << "Queijo suico:" << e.queijo_suico.qnt << '\n';
     std::cout << "Queijo cheddar:" << e.cheddar.qnt << '\n';
     std::cout << "Cebola:" << e.cebola.qnt << '\n';
