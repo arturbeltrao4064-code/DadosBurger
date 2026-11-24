@@ -268,7 +268,9 @@ int main(int argc, char *argv[]) {
             escreverRelatorio(raiz, historico.tamanho);
 
             Pedido removido;
-            while (desenfileira(partida.filaClientes, removido)) {}
+            while (desenfileira(partida.filaClientes, removido)) {
+                destruir(removido.receita);
+            }
             Ingrediente ingrediente;
             while (desempilha(partida.hamburguer, ingrediente)) {}
             for (int i = 0; i < 3; i++) destruirHeap(partida.e.pereciveis[i]);
