@@ -221,6 +221,8 @@ int main(int argc, char *argv[]) {
         log << "Entradas carregadas no historico: " << historico.tamanho << "\n\n";
     }
 
+    int historicoInicial = historico.tamanho;
+
     int opcao = -1;
     while (opcao != 0) {
         std::cout << "\n========== DADO BURGER ==========\n";
@@ -265,7 +267,7 @@ int main(int argc, char *argv[]) {
                 std::cout << "Nao foi possivel registrar o resultado.\n";
             }
 
-            escreverRelatorio(raiz, historico.tamanho);
+            escreverRelatorio(raiz, historicoInicial);
 
             Pedido removido;
             while (desenfileira(partida.filaClientes, removido)) {
