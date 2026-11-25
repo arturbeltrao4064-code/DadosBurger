@@ -223,10 +223,10 @@ char interfaceLerIngrediente(const Partida& partida, bool preparar) {
                 return codigos[i];
             }
         }
-        if (IsKeyPressed(KEY_ESCAPE)) return '\\0';
+        if (IsKeyPressed(KEY_ESCAPE)) return '\0';
         EndDrawing();
     }
-    return '\\0';
+    return '\0';
 }
 
 void interfaceMensagem(const char *mensagem) {
