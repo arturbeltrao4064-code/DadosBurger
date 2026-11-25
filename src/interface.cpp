@@ -217,8 +217,11 @@ char interfaceLerIngrediente(const Partida& partida, bool preparar) {
             int coluna = i % 3;
             int linha = i / 3;
             Rectangle area = { 285.0f + coluna * 235.0f, 205.0f + linha * 78.0f, 210, 55 };
-            if (botao(TextFormat("%c - %s", (char)(codigos[i] - 32), nomeIngrediente(codigos[i])),
-                      area, (Color){ 112, 70, 40, 255 }, 17)) {
+            bool permitido = !preparar || codigos[i] == 's' || codigos[i] == 'q' ||
+                             codigos[i] == 'c' || codigos[i] == 't' ||
+                             codigos[i] == 'n' || codigos[i] == 'o' || codigos[i] == 'b';
+            if (permitido && botao(TextFormat("%c - %s", (char)(codigos[i] - 32), nomeIngrediente(codigos[i])),
+                                   area, (Color){ 112, 70, 40, 255 }, 17)) {
                 EndDrawing();
                 return codigos[i];
             }
@@ -304,9 +307,9 @@ int interfaceEscolherCriterioHistorico() {
             criterio = 1;
         if (botao("PONTUACAO DECRESCENTE", (Rectangle){ 350, 405, 580, 65 }, MARROM))
             criterio = 2;
-        if (botao("VOLTAR", (Rectangle){ 500, 510, 280, 55 }, MARROM_CLARO))
-            criterio = 0;
+        bool voltar = botao("VOLTAR", (Rectangle){ 500, 510, 280, 55 }, MARROM_CLARO);
         EndDrawing();
+        if (voltar) return 0;
         if (criterio != 0) return criterio;
         if (WindowShouldClose()) return 0;
     }
