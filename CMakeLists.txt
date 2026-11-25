@@ -64,3 +64,39 @@ else()
         -Wpedantic
     )
 endif()
+
+# Executavel separado para testar a interface grafica sem alterar o fluxo
+# principal do jogo enquanto a integracao e desenvolvida.
+add_executable(dado_burger_interface
+    src/interface_demo.cpp
+    src/interface.cpp
+)
+
+target_include_directories(dado_burger_interface PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${RAYLIB_INCLUDE_DIRS}
+)
+
+target_link_directories(dado_burger_interface PRIVATE
+    ${RAYLIB_LIBRARY_DIRS}
+)
+
+target_link_libraries(dado_burger_interface PRIVATE
+    ${RAYLIB_LIBRARIES}
+    X11::X11
+    OpenGL::GL
+    Threads::Threads
+    ${CMAKE_DL_LIBS}
+    m
+    rt
+)
+
+if(MSVC)
+    target_compile_options(dado_burger_interface PRIVATE /W4)
+else()
+    target_compile_options(dado_burger_interface PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+    )
+endif()
