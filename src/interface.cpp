@@ -12,7 +12,7 @@ static bool desenharBotao(const char *texto, Rectangle area, Color cor) {
     bool sobre = CheckCollisionPointRec(mouse, area);
 
     DrawRectangleRounded(area, 0.22f, 12, sobre ? MARROM_CLARO : cor);
-    DrawRectangleRoundedLines(area, 0.22f, 12, 2.0f, sobre ? CREME : MARROM);
+    DrawRectangleRoundedLinesEx(area, 0.22f, 12, 2.0f, sobre ? CREME : MARROM);
 
     int largura = MeasureText(texto, 24);
     DrawText(texto, (int)(area.x + (area.width - largura) / 2),
