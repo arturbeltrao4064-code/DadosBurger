@@ -238,10 +238,11 @@ char interfaceLerIngrediente(const Partida& partida, bool preparar) {
                 break;
             }
         }
+        bool voltar = botao("CANCELAR / VOLTAR", (Rectangle){ 500, 525, 280, 48 }, VERMELHO, 18);
         bool cancelar = IsKeyPressed(KEY_ESCAPE);
         EndDrawing();
         if (escolhido != '\0') return escolhido;
-        if (cancelar) return '\0';
+        if (voltar || cancelar) return '\0';
     }
     return '\0';
 }
