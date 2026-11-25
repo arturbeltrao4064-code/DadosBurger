@@ -160,9 +160,14 @@ int iniciarInterface() {
             if (botao("HISTORICO", (Rectangle){ 110, 551, 330, 58 }, MARROM)) { opcao = 2; executando = false; }
             if (botao("SAIR", (Rectangle){ 110, 624, 330, 48 }, MARROM_CLARO)) { opcao = 0; executando = false; }
         } else {
-            DrawText("COMO JOGAR", 90, 400, 32, MARROM);
-            DrawText("I preparar | A adicionar | R remover | E estoque | P pedido | S sair", 90, 455, 19, MARROM);
-            if (botao("VOLTAR", (Rectangle){ 110, 570, 250, 55 }, MARROM)) tela = 0;
+            DrawText("COMO JOGAR", 90, 390, 34, MARROM);
+            DrawText("OBJETIVO: atender os 10 clientes antes que a paciencia acabe.", 90, 440, 20, MARROM);
+            DrawText("I - Preparar ingrediente (1 turno)     A - Adicionar ingrediente (1 turno)", 90, 475, 18, MARROM);
+            DrawText("R - Remover do topo (1 turno)           E - Consultar estoque (gratuito)", 90, 505, 18, MARROM);
+            DrawText("P - Consultar pedido (gratuito)         S - Encerrar partida", 90, 535, 18, MARROM);
+            DrawText("Selecione ingredientes na tela seguinte. Prepare antes de adicionar", 90, 565, 17, MARROM_CLARO);
+            DrawText("carne, ovo, bacon, queijos, cebola e tomate. O pao superior fecha o lanche.", 90, 590, 17, MARROM_CLARO);
+            if (botao("VOLTAR", (Rectangle){ 110, 630, 250, 48 }, MARROM)) tela = 0;
         }
         EndDrawing();
     }
