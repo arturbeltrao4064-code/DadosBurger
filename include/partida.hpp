@@ -23,6 +23,8 @@ struct Partida {
 extern double tempoTotalBuscas;
 
 void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId);
-bool executarPartida(Partida& p);
+bool executarPartida(Partida& p, bool& salvar);
+bool salvarPartida(const Partida& p, const char *caminho);
+bool carregarPartida(Partida& p, const char *caminho);
 
 #endif
