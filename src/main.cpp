@@ -228,7 +228,9 @@ int main(int argc, char *argv[]) {
 
             Partida partida = {};
             inicializarPartida(partida, raiz, maiorCodigo(raiz));
+            interfaceAbrirJogo();
             executarPartida(partida);
+            interfaceFecharJogo();
 
             std::cin.ignore(10000, '\n');
             std::cout << "Nome do jogador: ";
