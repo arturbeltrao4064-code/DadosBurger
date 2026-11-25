@@ -193,7 +193,7 @@ bool executarPartida(Partida& p) {
                 novo.turno_validade = 0;
                 novo.qnt = 1;
                 if (!inserir(p.e.pereciveis[indice], novo, p.turnoAtual)) {
-                    
+                    interfaceMensagem("Estoque cheio: nao foi possivel preparar.");
                     continue;
                 }
             } else {
@@ -201,7 +201,6 @@ bool executarPartida(Partida& p) {
                 continue;
             }
             
-            interfaceMensagem("Ingrediente preparado.");
             interfaceMensagem("Ingrediente preparado.");
             avancarTurno(p);
         }
@@ -214,7 +213,7 @@ bool executarPartida(Partida& p) {
 
             if (!estaVazia(p.hamburguer) &&
                 p.hamburguer.topo->dado.comida == 'z') {
-                
+                interfaceMensagem("O pao superior ja foi colocado. Remova-o primeiro.");
                 continue;
             }
 
@@ -250,12 +249,12 @@ bool executarPartida(Partida& p) {
             else disponivel = false;
 
             if (!disponivel) {
-                
+                interfaceMensagem("Ingrediente invalido ou sem estoque.");
                 continue;
             }
 
             if (!empilha(p.hamburguer, novo)) {
-                
+                interfaceMensagem("Nao foi possivel adicionar o ingrediente.");
                 continue;
             }
 
@@ -264,7 +263,6 @@ bool executarPartida(Partida& p) {
             if (ingrediente == 'c') p.e.cebola.qnt--;
             if (ingrediente == 't') p.e.tomate.qnt--;
 
-            interfaceMensagem("Ingrediente adicionado ao hamburguer.");
             interfaceMensagem("Ingrediente adicionado ao hamburguer.");
             avancarTurno(p);
 
@@ -275,7 +273,6 @@ bool executarPartida(Partida& p) {
                     destruir(atendido.receita);
                     p.pontuacao++;
                     limparHamburguer(p.hamburguer);
-                    interfaceMensagem("Pedido correto! Cliente atendido.");
                     p.pacienciaAtual = 15;
                     interfaceMensagem("Pedido correto! Cliente atendido.");
                     
@@ -285,18 +282,17 @@ bool executarPartida(Partida& p) {
                         break;
                     }
                 } else {
-                    
+                    interfaceMensagem("Receita incorreta. Remova ingredientes e tente novamente.");
                 }
             }
         }
         else if (acao == 'R') {
             Ingrediente removido;
             if (!desempilha(p.hamburguer, removido)) {
-                
+                interfaceMensagem("O hamburguer esta vazio.");
                 continue;
             }
             
-            interfaceMensagem("Ingrediente removido do topo.");
             interfaceMensagem("Ingrediente removido do topo.");
             avancarTurno(p);
         }
