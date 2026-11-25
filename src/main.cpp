@@ -214,9 +214,9 @@ int main(int argc, char *argv[]) {
 
             if (salvarHistorico(argv[2], resultado) &&
                 inserir(historico, resultado, historico.tamanho)) {
-                std::cout << "Resultado salvo no historico.\n";
+                interfaceAviso("Resultado salvo no historico.");
             } else {
-                std::cout << "Nao foi possivel registrar o resultado.\n";
+                interfaceAviso("Nao foi possivel registrar o resultado.");
             }
 
             escreverRelatorio(raiz, historicoInicial);
@@ -235,12 +235,12 @@ int main(int argc, char *argv[]) {
             mostrarHistorico(historico);
         }
         else if (opcao != 0) {
-            std::cout << "Opcao invalida.\n";
+            interfaceAviso("Opcao invalida.");
         }
     }
 
     destruir(historico);
     DestruirAVL(raiz);
-    std::cout << "Programa encerrado.\n";
+
     return 0;
 }
