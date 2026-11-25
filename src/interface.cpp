@@ -103,8 +103,8 @@ static void desenharEstoque(const Estoque& e) {
 
 static void desenharControles() {
     DrawText("ACOES", 590, 495, 23, MARROM);
-    DrawText("I Preparar    A Adicionar    R Remover    E Estoque    P Pedido    S Sair",
-        590, 528, 17, MARROM);
+    DrawText("I Preparar  A Adicionar  R Remover  E Estoque  P Pedido  G Salvar  S Sair",
+        590, 528, 16, MARROM);
     DrawText("Use os botoes abaixo ou as teclas correspondentes.",
         590, 558, 15, MARROM_CLARO);
 }
@@ -155,18 +155,19 @@ int iniciarInterface() {
         DrawRectangleRounded((Rectangle){ 800, 265, 200, 30 }, 0.3f, 10, (Color){ 231, 169, 70, 255 });
 
         if (tela == 0) {
-            DrawText("N - Novo jogo   C - Como jogar   H - Historico   ESC - Sair",
+            DrawText("N - Novo jogo   C - Continuar   J - Como jogar   H - Historico",
                      110, 365, 17, MARROM_CLARO);
-            if (botao("NOVO JOGO", (Rectangle){ 110, 405, 330, 58 }, LARANJA) || IsKeyPressed(KEY_N)) { opcao = 1; executando = false; }
-            if (botao("COMO JOGAR", (Rectangle){ 110, 478, 330, 58 }, MARROM) || IsKeyPressed(KEY_C)) tela = 1;
-            if (botao("HISTORICO", (Rectangle){ 110, 551, 330, 58 }, MARROM) || IsKeyPressed(KEY_H)) { opcao = 2; executando = false; }
-            if (botao("SAIR", (Rectangle){ 110, 624, 330, 48 }, MARROM_CLARO) || IsKeyPressed(KEY_ESCAPE)) { opcao = 0; executando = false; }
+            if (botao("NOVO JOGO", (Rectangle){ 110, 395, 330, 52 }, LARANJA) || IsKeyPressed(KEY_N)) { opcao = 1; executando = false; }
+            if (botao("CONTINUAR", (Rectangle){ 110, 460, 330, 52 }, VERDE) || IsKeyPressed(KEY_C)) { opcao = 3; executando = false; }
+            if (botao("COMO JOGAR", (Rectangle){ 110, 525, 330, 52 }, MARROM) || IsKeyPressed(KEY_J)) tela = 1;
+            if (botao("HISTORICO", (Rectangle){ 110, 590, 330, 52 }, MARROM) || IsKeyPressed(KEY_H)) { opcao = 2; executando = false; }
+            if (botao("SAIR", (Rectangle){ 110, 650, 330, 48 }, MARROM_CLARO) || IsKeyPressed(KEY_ESCAPE)) { opcao = 0; executando = false; }
         } else {
             DrawText("COMO JOGAR", 90, 390, 34, MARROM);
             DrawText("OBJETIVO: atender os 10 clientes antes que a paciencia acabe.", 90, 440, 20, MARROM);
             DrawText("I - Preparar ingrediente (1 turno)     A - Adicionar ingrediente (1 turno)", 90, 475, 18, MARROM);
             DrawText("R - Remover do topo (1 turno)           E - Consultar estoque (gratuito)", 90, 505, 18, MARROM);
-            DrawText("P - Consultar pedido (gratuito)         S - Encerrar partida", 90, 535, 18, MARROM);
+            DrawText("P - Consultar pedido (gratuito)         G - Salvar e sair   S - Encerrar", 90, 535, 18, MARROM);
             DrawText("Selecione ingredientes na tela seguinte. Prepare antes de adicionar", 90, 565, 17, MARROM_CLARO);
             DrawText("carne, ovo, bacon, queijos, cebola e tomate. O pao superior fecha o lanche.", 90, 590, 17, MARROM_CLARO);
             DrawText("ESC - Voltar ao menu", 390, 645, 18, MARROM_CLARO);
@@ -205,6 +206,7 @@ char interfaceLerAcao(const Partida& partida) {
         if (IsKeyPressed(KEY_R)) { EndDrawing(); return 'R'; }
         if (IsKeyPressed(KEY_E)) { EndDrawing(); return 'E'; }
         if (IsKeyPressed(KEY_P)) { EndDrawing(); return 'P'; }
+        if (IsKeyPressed(KEY_G)) { EndDrawing(); return 'G'; }
         if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_ESCAPE)) { EndDrawing(); return 'S'; }
         char acao = '\0';
         if (botao("PREPARAR", (Rectangle){ 55, 680, 170, 34 }, LARANJA)) acao = 'I';
@@ -212,7 +214,8 @@ char interfaceLerAcao(const Partida& partida) {
         else if (botao("REMOVER", (Rectangle){ 415, 680, 170, 34 }, MARROM)) acao = 'R';
         else if (botao("ESTOQUE", (Rectangle){ 595, 680, 170, 34 }, MARROM_CLARO)) acao = 'E';
         else if (botao("PEDIDO", (Rectangle){ 775, 680, 170, 34 }, MARROM_CLARO)) acao = 'P';
-        else if (botao("SAIR", (Rectangle){ 955, 680, 170, 34 }, VERMELHO)) acao = 'S';
+        else if (botao("SALVAR", (Rectangle){ 955, 680, 110, 34 }, VERDE)) acao = 'G';
+        else if (botao("SAIR", (Rectangle){ 1075, 680, 110, 34 }, VERMELHO)) acao = 'S';
         EndDrawing();
         if (acao != '\0') return acao;
     }
