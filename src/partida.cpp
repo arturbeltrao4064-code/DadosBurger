@@ -201,6 +201,7 @@ bool executarPartida(Partida& p) {
                 continue;
             }
             
+            interfaceMensagem("Ingrediente preparado.");
             avancarTurno(p);
         }
         else if (acao == 'A') {
@@ -262,6 +263,7 @@ bool executarPartida(Partida& p) {
             if (ingrediente == 'c') p.e.cebola.qnt--;
             if (ingrediente == 't') p.e.tomate.qnt--;
 
+            interfaceMensagem("Ingrediente adicionado ao hamburguer.");
             avancarTurno(p);
 
             if (ingrediente == 'z') {
@@ -272,6 +274,7 @@ bool executarPartida(Partida& p) {
                     p.pontuacao++;
                     limparHamburguer(p.hamburguer);
                     p.pacienciaAtual = 15;
+                    interfaceMensagem("Pedido correto! Cliente atendido.");
                     
                     if (estaVazia(p.filaClientes)) {
                         
@@ -290,6 +293,7 @@ bool executarPartida(Partida& p) {
                 continue;
             }
             
+            interfaceMensagem("Ingrediente removido do topo.");
             avancarTurno(p);
         }
         else {
