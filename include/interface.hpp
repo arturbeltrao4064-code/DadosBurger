@@ -5,7 +5,7 @@
 #include "historico.hpp"
 #include <string>
 
-// Menu principal: 1 novo jogo, 2 historico, 0 sair.
+// Menu principal: 1 novo jogo, 2 historico, 3 continuar, 0 sair.
 int iniciarInterface();
 
 void interfaceAbrirJogo();
