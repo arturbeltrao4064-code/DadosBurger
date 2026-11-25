@@ -9,6 +9,7 @@
 #include "arquivos.hpp"
 #include "partida.hpp"
 #include "timer.hpp"
+#include "interface.hpp"
 
 static int maiorCodigo(const NoAVL *no) {
     if (no == nullptr) return 0;
@@ -103,21 +104,6 @@ static void mostrarHistorico(const ListaContDin& historico) {
 
     std::cout << "Tempo do Quick Sort: " << tempo << " segundos\n";
     delete[] copia;
-}
-
-static void mostrarComoJogar() {
-    std::cout << "\n========== COMO JOGAR ==========\n";
-    std::cout << "Objetivo: atender todos os clientes antes que percam a paciencia.\n";
-    std::cout << "Cada cliente comeca com 15 turnos de paciencia. A partida tem 10 clientes.\n";
-    std::cout << "I prepara, A adiciona e R remove ingrediente; cada acao consome 1 turno.\n";
-    std::cout << "E consulta o estoque e P consulta o pedido; essas consultas nao consomem turno.\n";
-    std::cout << "Ingredientes: k ketchup, m mostarda, p picles, a alface, z pao de cima,\n";
-    std::cout << "s queijo suico, q cheddar, c cebola, t tomate, n carne, o ovo e b bacon.\n";
-    std::cout << "Prepare os ingredientes que precisam de preparo antes de adiciona-los.\n";
-    std::cout << "O pao de baixo ja esta no prato e nao faz parte da receita.\n";
-    std::cout << "O pao de cima fecha o hamburguer; depois dele nao se adiciona mais nada.\n";
-    std::cout << "Carne, ovo e bacon vencem apos 3 turnos; o que vence primeiro sai primeiro.\n";
-    std::cout << "Vitoria: atender todos os clientes. Derrota: paciencia chegar a zero.\n";
 }
 
 static void escreverRelatorio(const NoAVL *raiz, int historicoCarregado) {
@@ -229,20 +215,7 @@ int main(int argc, char *argv[]) {
 
     int opcao = -1;
     while (opcao != 0) {
-        std::cout << "\n========== DADO BURGER ==========\n";
-        std::cout << "[1] Novo jogo\n";
-        std::cout << "[2] Como jogar\n";
-        std::cout << "[3] Historico\n";
-        std::cout << "[0] Sair\n";
-        std::cout << "Escolha: ";
-
-        if (!(std::cin >> opcao)) {
-            std::cin.clear();
-            std::cin.ignore(10000, '\n');
-            opcao = -1;
-            std::cout << "Digite uma opcao valida.\n";
-            continue;
-        }
+        opcao = iniciarInterface();
 
         if (opcao == 1) {
             totalComparacoesBusca = 0;
@@ -286,9 +259,6 @@ int main(int argc, char *argv[]) {
             encDestruir(partida.cache);
         }
         else if (opcao == 2) {
-            mostrarComoJogar();
-        }
-        else if (opcao == 3) {
             mostrarHistorico(historico);
         }
         else if (opcao != 0) {
