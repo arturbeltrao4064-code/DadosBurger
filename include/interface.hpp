@@ -2,6 +2,7 @@
 #define INTERFACE_HPP
 
 #include "partida.hpp"
+#include "historico.hpp"
 #include <string>
 
 // Menu principal: 1 novo jogo, 2 historico, 0 sair.
@@ -17,5 +18,8 @@ void interfaceMostrarEstoque(const Estoque& estoque);
 void interfaceMostrarPedido(const Pedido& pedido);
 std::string interfaceLerNome();
 void interfaceMostrarResultado(const std::string& nome, int pontuacao);
+int interfaceEscolherCriterioHistorico();
+void interfaceMostrarHistorico(const PARTIDA vetor[], int quantidade, double tempo);
+void interfaceAviso(const char *mensagem);
 
 #endif
