@@ -196,6 +196,7 @@ int main(int argc, char *argv[]) {
         opcao = iniciarInterface();
 
         if (opcao == 1) {
+            std::remove(arquivoSalvo);
             totalComparacoesBusca = 0;
             totalBuscas = 0;
             tempoTotalBuscas = 0.0;
