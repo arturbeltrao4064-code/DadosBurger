@@ -176,7 +176,7 @@ int iniciarInterface() {
         EndDrawing();
     }
     if (WindowShouldClose()) opcao = 0;
-    if (opcao != 1 && opcao != 2) {
+    if (opcao != 1 && opcao != 2 && opcao != 3) {
         CloseWindow();
         janelaAberta = false;
     }
