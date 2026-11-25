@@ -251,13 +251,55 @@ void interfaceMensagem(const char *mensagem) {
 }
 
 void interfaceMostrarEstoque(const Estoque& estoque) {
-    (void)estoque;
-    mensagemAtual = "Estoque atualizado no painel lateral.";
+    while (janelaAberta && !WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(FUNDO);
+        DrawText("ESTOQUE DA COZINHA", 390, 90, 38, MARROM);
+        DrawRectangleRounded((Rectangle){ 250, 165, 780, 350 }, 0.05f, 8, CREME);
+        DrawText("INGREDIENTES PREPARADOS", 300, 195, 24, LARANJA);
+        DrawText(TextFormat("Queijo suico: %d", estoque.queijo_suico.qnt), 310, 245, 22, MARROM);
+        DrawText(TextFormat("Cheddar: %d", estoque.cheddar.qnt), 680, 245, 22, MARROM);
+        DrawText(TextFormat("Cebola: %d", estoque.cebola.qnt), 310, 295, 22, MARROM);
+        DrawText(TextFormat("Tomate: %d", estoque.tomate.qnt), 680, 295, 22, MARROM);
+        DrawText("INGREDIENTES PERECIVEIS", 300, 355, 24, LARANJA);
+        DrawText(TextFormat("Carne: %d", estoque.pereciveis[0].tamanho), 310, 405, 22, MARROM);
+        DrawText(TextFormat("Ovo: %d", estoque.pereciveis[1].tamanho), 550, 405, 22, MARROM);
+        DrawText(TextFormat("Bacon: %d", estoque.pereciveis[2].tamanho), 790, 405, 22, MARROM);
+        DrawText("Ketchup, mostarda, picles, alface e pao: ilimitados", 310, 465, 18, MARROM_CLARO);
+        bool voltar = botao("VOLTAR A PARTIDA", (Rectangle){ 455, 565, 370, 60 }, VERDE);
+        bool cancelar = IsKeyPressed(KEY_ESCAPE);
+        EndDrawing();
+        if (voltar || cancelar) break;
+    }
 }
 
 void interfaceMostrarPedido(const Pedido& pedido) {
-    (void)pedido;
-    mensagemAtual = "Pedido atual exibido no painel superior.";
+    while (janelaAberta && !WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(FUNDO);
+        DrawText("PEDIDO DO CLIENTE", 390, 90, 38, MARROM);
+        DrawRectangleRounded((Rectangle){ 250, 165, 780, 350 }, 0.05f, 8, CREME);
+        DrawText(pedido.nome.c_str(), 300, 205, 30, LARANJA);
+        DrawText(TextFormat("Codigo: %d", pedido.cod), 300, 255, 21, MARROM_CLARO);
+        DrawText("INGREDIENTES DA RECEITA", 300, 315, 23, MARROM);
+        int x = 310;
+        int y = 365;
+        NoReceita *item = pedido.receita.ini;
+        while (item != nullptr) {
+            DrawText(TextFormat("%c", (char)(item->ingrediente - 'a' + 'A')), x, y, 23, MARROM);
+            x += 42;
+            if (x > 900) {
+                x = 310;
+                y += 38;
+            }
+            item = item->prox;
+        }
+        DrawText("Monte os ingredientes na ordem apresentada.", 300, 465, 18, MARROM_CLARO);
+        bool voltar = botao("VOLTAR A PARTIDA", (Rectangle){ 455, 565, 370, 60 }, VERDE);
+        bool cancelar = IsKeyPressed(KEY_ESCAPE);
+        EndDrawing();
+        if (voltar || cancelar) break;
+    }
 }
 
 std::string interfaceLerNome() {
