@@ -4,6 +4,7 @@
 #include <limits>
 #include <cstdlib>
 #include <ctime>
+#include <cstdio>
 #include "avl.hpp"
 #include "historico.hpp"
 #include "arquivos.hpp"
@@ -190,6 +191,7 @@ int main(int argc, char *argv[]) {
     int historicoInicial = historico.tamanho;
 
     int opcao = -1;
+    const char *arquivoSalvo = "partida_salva.txt";
     while (opcao != 0) {
         opcao = iniciarInterface();
 
@@ -205,7 +207,25 @@ int main(int argc, char *argv[]) {
             Partida partida = {};
             inicializarPartida(partida, raiz, maiorCodigo(raiz));
             interfaceAbrirJogo();
-            executarPartida(partida);
+            bool salvar = false;
+            executarPartida(partida, salvar);
+
+            if (salvar) {
+                if (salvarPartida(partida, arquivoSalvo))
+                    interfaceAviso("Partida salva. Voce pode continuar pelo menu.");
+                else
+                    interfaceAviso("Nao foi possivel salvar a partida.");
+                interfaceFecharJogo();
+                Pedido removido;
+                while (desenfileira(partida.filaClientes, removido)) destruir(removido.receita);
+                Ingrediente ingrediente;
+                while (desempilha(partida.hamburguer, ingrediente)) {}
+                for (int i = 0; i < 3; i++) destruirHeap(partida.e.pereciveis[i]);
+                encDestruir(partida.cache);
+                continue;
+            }
+
+            std::remove(arquivoSalvo);
 
             PARTIDA resultado;
             resultado.nome_jogador = interfaceLerNome();
@@ -233,6 +253,41 @@ int main(int argc, char *argv[]) {
         }
         else if (opcao == 2) {
             mostrarHistorico(historico);
+        }
+        else if (opcao == 3) {
+            Partida partida = {};
+            if (!carregarPartida(partida, arquivoSalvo)) {
+                interfaceAviso("Nao existe partida salva ou o arquivo esta invalido.");
+                continue;
+            }
+            interfaceAbrirJogo();
+            bool salvar = false;
+            executarPartida(partida, salvar);
+            if (salvar) {
+                if (salvarPartida(partida, arquivoSalvo))
+                    interfaceAviso("Partida salva novamente.");
+                else
+                    interfaceAviso("Nao foi possivel salvar a partida.");
+            } else {
+                std::remove(arquivoSalvo);
+                PARTIDA resultado;
+                resultado.nome_jogador = interfaceLerNome();
+                resultado.pontuacao = partida.pontuacao;
+                interfaceMostrarResultado(resultado.nome_jogador, resultado.pontuacao);
+                if (salvarHistorico(argv[2], resultado) &&
+                    inserir(historico, resultado, historico.tamanho))
+                    interfaceAviso("Resultado salvo no historico.");
+                else
+                    interfaceAviso("Nao foi possivel registrar o resultado.");
+                escreverRelatorio(raiz, historicoInicial);
+            }
+            interfaceFecharJogo();
+            Pedido removido;
+            while (desenfileira(partida.filaClientes, removido)) destruir(removido.receita);
+            Ingrediente ingrediente;
+            while (desempilha(partida.hamburguer, ingrediente)) {}
+            for (int i = 0; i < 3; i++) destruirHeap(partida.e.pereciveis[i]);
+            encDestruir(partida.cache);
         }
         else if (opcao != 0) {
             interfaceAviso("Opcao invalida.");
