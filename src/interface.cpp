@@ -193,12 +193,14 @@ char interfaceLerAcao(const Partida& partida) {
         if (IsKeyPressed(KEY_E)) return 'E';
         if (IsKeyPressed(KEY_P)) return 'P';
         if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_ESCAPE)) return 'S';
-        if (botao("PREPARAR", (Rectangle){ 55, 680, 170, 34 }, LARANJA)) return 'I';
-        if (botao("ADICIONAR", (Rectangle){ 235, 680, 170, 34 }, VERDE)) return 'A';
-        if (botao("REMOVER", (Rectangle){ 415, 680, 170, 34 }, MARROM)) return 'R';
-        if (botao("ESTOQUE", (Rectangle){ 595, 680, 170, 34 }, MARROM_CLARO)) return 'E';
-        if (botao("PEDIDO", (Rectangle){ 775, 680, 170, 34 }, MARROM_CLARO)) return 'P';
-        if (botao("SAIR", (Rectangle){ 955, 680, 170, 34 }, VERMELHO)) return 'S';
+        BeginDrawing();
+        if (botao("PREPARAR", (Rectangle){ 55, 680, 170, 34 }, LARANJA)) { EndDrawing(); return 'I'; }
+        if (botao("ADICIONAR", (Rectangle){ 235, 680, 170, 34 }, VERDE)) { EndDrawing(); return 'A'; }
+        if (botao("REMOVER", (Rectangle){ 415, 680, 170, 34 }, MARROM)) { EndDrawing(); return 'R'; }
+        if (botao("ESTOQUE", (Rectangle){ 595, 680, 170, 34 }, MARROM_CLARO)) { EndDrawing(); return 'E'; }
+        if (botao("PEDIDO", (Rectangle){ 775, 680, 170, 34 }, MARROM_CLARO)) { EndDrawing(); return 'P'; }
+        if (botao("SAIR", (Rectangle){ 955, 680, 170, 34 }, VERMELHO)) { EndDrawing(); return 'S'; }
+        EndDrawing();
         PollInputEvents();
     }
     return 'S';
@@ -208,7 +210,7 @@ char interfaceLerIngrediente(const Partida& partida, bool preparar) {
     const char codigos[12] = {'k','m','p','a','z','s','q','c','t','n','o','b'};
     while (janelaAberta && !WindowShouldClose()) {
         desenharPartida(partida);
-        DrawRectangle(250, 115, 780, 480, FUNDO);
+        BeginDrawing();
         DrawRectangleRounded((Rectangle){ 250, 115, 780, 480 }, 0.08f, 10, CREME);
         DrawText(preparar ? "ESCOLHA O INGREDIENTE PARA PREPARAR" : "ESCOLHA O INGREDIENTE PARA ADICIONAR",
                  285, 145, 21, MARROM);
@@ -221,10 +223,6 @@ char interfaceLerIngrediente(const Partida& partida, bool preparar) {
                 return codigos[i];
         }
         if (IsKeyPressed(KEY_ESCAPE)) return ' ';
-        for (int i = 0; i < 12; i++) {
-            int tecla = KEY_K + i;
-            if (tecla <= KEY_Z && IsKeyPressed(tecla)) return codigos[i];
-        }
         EndDrawing();
         PollInputEvents();
     }
