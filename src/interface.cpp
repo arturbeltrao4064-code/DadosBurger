@@ -242,3 +242,53 @@ void interfaceMostrarPedido(const Pedido& pedido) {
     (void)pedido;
     mensagemAtual = "Pedido atual exibido no painel superior.";
 }
+
+std::string interfaceLerNome() {
+    char nome[21] = {};
+    int quantidade = 0;
+
+    while (janelaAberta && !WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(FUNDO);
+        DrawText("PARTIDA FINALIZADA", 360, 170, 42, MARROM);
+        DrawText("Digite seu nome para salvar a pontuacao:", 330, 270, 24, MARROM_CLARO);
+        DrawRectangleRounded((Rectangle){ 330, 330, 620, 65 }, 0.12f, 8, CREME);
+        DrawText(nome, 355, 347, 27, MARROM);
+        DrawText("Ate 20 caracteres. ENTER para confirmar.", 355, 415, 18, MARROM_CLARO);
+        EndDrawing();
+
+        int tecla = GetCharPressed();
+        while (tecla > 0) {
+            if (tecla >= 32 && tecla <= 125 && quantidade < 20) {
+                nome[quantidade] = (char)tecla;
+                quantidade++;
+                nome[quantidade] = '\0';
+            }
+            tecla = GetCharPressed();
+        }
+        if (IsKeyPressed(KEY_BACKSPACE) && quantidade > 0) {
+            quantidade--;
+            nome[quantidade] = '\0';
+        }
+        if (IsKeyPressed(KEY_ENTER)) {
+            if (quantidade == 0) return "Jogador";
+            return std::string(nome);
+        }
+    }
+    return "Jogador";
+}
+
+void interfaceMostrarResultado(const std::string& nome, int pontuacao) {
+    while (janelaAberta && !WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(FUNDO);
+        DrawText("RESULTADO DA PARTIDA", 330, 170, 42, MARROM);
+        DrawText(nome.c_str(), 430, 275, 36, LARANJA);
+        DrawText(TextFormat("%d clientes atendidos", pontuacao), 420, 345, 28, MARROM);
+        if (botao("CONTINUAR", (Rectangle){ 480, 475, 320, 65 }, VERDE)) {
+            EndDrawing();
+            break;
+        }
+        EndDrawing();
+    }
+}
