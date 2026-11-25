@@ -109,8 +109,7 @@ static void desenharControles() {
         590, 558, 15, MARROM_CLARO);
 }
 
-static void desenharPartida(const Partida& p) {
-    BeginDrawing();
+static void desenharPartidaConteudo(const Partida& p) {
     ClearBackground(FUNDO);
     desenharTopo(p);
     desenharHamburguer(p);
@@ -119,6 +118,11 @@ static void desenharPartida(const Partida& p) {
     desenharControles();
     DrawRectangleRounded((Rectangle){ 55, 625, 1160, 48 }, 0.12f, 8, CREME);
     DrawText(mensagemAtual, 75, 640, 18, MARROM);
+}
+
+static void desenharPartida(const Partida& p) {
+    BeginDrawing();
+    desenharPartidaConteudo(p);
     EndDrawing();
 }
 
@@ -186,21 +190,23 @@ void interfaceAtualizar(const Partida& partida) {
 
 char interfaceLerAcao(const Partida& partida) {
     while (janelaAberta && !WindowShouldClose()) {
-        desenharPartida(partida);
-        if (IsKeyPressed(KEY_I)) return 'I';
-        if (IsKeyPressed(KEY_A)) return 'A';
-        if (IsKeyPressed(KEY_R)) return 'R';
-        if (IsKeyPressed(KEY_E)) return 'E';
-        if (IsKeyPressed(KEY_P)) return 'P';
-        if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_ESCAPE)) return 'S';
         BeginDrawing();
-        if (botao("PREPARAR", (Rectangle){ 55, 680, 170, 34 }, LARANJA)) { EndDrawing(); return 'I'; }
-        if (botao("ADICIONAR", (Rectangle){ 235, 680, 170, 34 }, VERDE)) { EndDrawing(); return 'A'; }
-        if (botao("REMOVER", (Rectangle){ 415, 680, 170, 34 }, MARROM)) { EndDrawing(); return 'R'; }
-        if (botao("ESTOQUE", (Rectangle){ 595, 680, 170, 34 }, MARROM_CLARO)) { EndDrawing(); return 'E'; }
-        if (botao("PEDIDO", (Rectangle){ 775, 680, 170, 34 }, MARROM_CLARO)) { EndDrawing(); return 'P'; }
-        if (botao("SAIR", (Rectangle){ 955, 680, 170, 34 }, VERMELHO)) { EndDrawing(); return 'S'; }
+        desenharPartidaConteudo(partida);
+        if (IsKeyPressed(KEY_I)) { EndDrawing(); return 'I'; }
+        if (IsKeyPressed(KEY_A)) { EndDrawing(); return 'A'; }
+        if (IsKeyPressed(KEY_R)) { EndDrawing(); return 'R'; }
+        if (IsKeyPressed(KEY_E)) { EndDrawing(); return 'E'; }
+        if (IsKeyPressed(KEY_P)) { EndDrawing(); return 'P'; }
+        if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_ESCAPE)) { EndDrawing(); return 'S'; }
+        char acao = '\0';
+        if (botao("PREPARAR", (Rectangle){ 55, 680, 170, 34 }, LARANJA)) acao = 'I';
+        else if (botao("ADICIONAR", (Rectangle){ 235, 680, 170, 34 }, VERDE)) acao = 'A';
+        else if (botao("REMOVER", (Rectangle){ 415, 680, 170, 34 }, MARROM)) acao = 'R';
+        else if (botao("ESTOQUE", (Rectangle){ 595, 680, 170, 34 }, MARROM_CLARO)) acao = 'E';
+        else if (botao("PEDIDO", (Rectangle){ 775, 680, 170, 34 }, MARROM_CLARO)) acao = 'P';
+        else if (botao("SAIR", (Rectangle){ 955, 680, 170, 34 }, VERMELHO)) acao = 'S';
         EndDrawing();
+        if (acao != '\0') return acao;
     }
     return 'S';
 }
@@ -208,11 +214,12 @@ char interfaceLerAcao(const Partida& partida) {
 char interfaceLerIngrediente(const Partida& partida, bool preparar) {
     const char codigos[12] = {'k','m','p','a','z','s','q','c','t','n','o','b'};
     while (janelaAberta && !WindowShouldClose()) {
-        desenharPartida(partida);
         BeginDrawing();
+        desenharPartidaConteudo(partida);
         DrawRectangleRounded((Rectangle){ 250, 115, 780, 480 }, 0.08f, 10, CREME);
         DrawText(preparar ? "ESCOLHA O INGREDIENTE PARA PREPARAR" : "ESCOLHA O INGREDIENTE PARA ADICIONAR",
                  285, 145, 21, MARROM);
+        char escolhido = '\0';
         for (int i = 0; i < 12; i++) {
             int coluna = i % 3;
             int linha = i / 3;
@@ -222,12 +229,14 @@ char interfaceLerIngrediente(const Partida& partida, bool preparar) {
                              codigos[i] == 'n' || codigos[i] == 'o' || codigos[i] == 'b';
             if (permitido && botao(TextFormat("%c - %s", (char)(codigos[i] - 32), nomeIngrediente(codigos[i])),
                                    area, (Color){ 112, 70, 40, 255 }, 17)) {
-                EndDrawing();
-                return codigos[i];
+                escolhido = codigos[i];
+                break;
             }
         }
-        if (IsKeyPressed(KEY_ESCAPE)) return '\0';
+        bool cancelar = IsKeyPressed(KEY_ESCAPE);
         EndDrawing();
+        if (escolhido != '\0') return escolhido;
+        if (cancelar) return '\0';
     }
     return '\0';
 }
