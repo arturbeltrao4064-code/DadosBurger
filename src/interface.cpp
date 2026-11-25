@@ -353,3 +353,36 @@ void interfaceAviso(const char *mensagem) {
         if (voltar) break;
     }
 }
+
+void interfaceMostrarRelatorio(int nos, int altura, int rotacoes, int historico,
+                               int buscas, int comparacoes, double media,
+                               double tempoBuscas, int entradas, int hits,
+                               int misses, double taxa, double fator, int colisoes) {
+    while (janelaAberta && !WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(FUNDO);
+        DrawText("RELATORIO DE DESEMPENHO", 250, 45, 38, MARROM);
+        DrawRectangleRounded((Rectangle){ 55, 115, 560, 485 }, 0.05f, 8, CREME);
+        DrawRectangleRounded((Rectangle){ 640, 115, 575, 485 }, 0.05f, 8, CREME);
+        DrawText("ARVORE AVL", 85, 140, 25, LARANJA);
+        DrawText(TextFormat("Nos inseridos: %d", nos), 85, 195, 19, MARROM);
+        DrawText(TextFormat("Altura: %d", altura), 85, 235, 19, MARROM);
+        DrawText(TextFormat("Rotacoes: %d", rotacoes), 85, 275, 19, MARROM);
+        DrawText(TextFormat("Historico carregado: %d", historico), 85, 315, 19, MARROM);
+        DrawText(TextFormat("Buscas: %d", buscas), 85, 355, 19, MARROM);
+        DrawText(TextFormat("Comparacoes: %d", comparacoes), 85, 395, 19, MARROM);
+        DrawText(TextFormat("Media por busca: %.4f", media), 85, 435, 19, MARROM);
+        DrawText(TextFormat("Tempo de buscas: %.8f s", tempoBuscas), 85, 475, 19, MARROM);
+        DrawText("TABELA HASH", 670, 140, 25, LARANJA);
+        DrawText("Tamanho da tabela: 101", 670, 195, 19, MARROM);
+        DrawText(TextFormat("Entradas ocupadas: %d", entradas), 670, 235, 19, MARROM);
+        DrawText(TextFormat("Hits: %d", hits), 670, 275, 19, MARROM);
+        DrawText(TextFormat("Misses: %d", misses), 670, 315, 19, MARROM);
+        DrawText(TextFormat("Taxa de acerto: %.2f%%", taxa), 670, 355, 19, MARROM);
+        DrawText(TextFormat("Fator de carga: %.4f", fator), 670, 395, 19, MARROM);
+        DrawText(TextFormat("Colisoes: %d", colisoes), 670, 435, 19, MARROM);
+        bool continuar = botao("VOLTAR AO MENU", (Rectangle){ 470, 630, 340, 55 }, VERDE);
+        EndDrawing();
+        if (continuar) break;
+    }
+}
