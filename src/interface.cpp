@@ -72,37 +72,46 @@ void iniciarInterface() {
             DrawText("DADO BURGER", 930, 640, 18, MARROM_CLARO);
         }
         else if (tela == 1) {
-            DrawText("COMO JOGAR", 90, 65, 42, MARROM);
-            DrawText("OBJETIVO", 95, 145, 23, LARANJA);
-            DrawText("Atenda os 10 clientes antes que a paciencia chegue a zero.", 95, 180, 20, MARROM);
-            DrawText("ACOES", 95, 235, 23, LARANJA);
-            DrawText("I - Preparar ingrediente (consome 1 turno)", 95, 270, 19, MARROM);
-            DrawText("A - Adicionar ingrediente ao hamburguer (consome 1 turno)", 95, 302, 19, MARROM);
-            DrawText("R - Remover ingrediente do topo (consome 1 turno)", 95, 334, 19, MARROM);
-            DrawText("E - Consultar estoque (nao consome turno)", 95, 366, 19, MARROM);
-            DrawText("P - Consultar pedido (nao consome turno)", 95, 398, 19, MARROM);
-            DrawText("S - Encerrar a partida", 95, 430, 19, MARROM);
-            DrawText("REGRAS IMPORTANTES", 95, 480, 23, LARANJA);
-            DrawText("Prepare os ingredientes que exigem preparo antes de adiciona-los.", 95, 515, 18, MARROM);
-            DrawText("O pao de cima fecha o hamburguer. Carne, ovo e bacon vencem em 3 turnos.", 95, 545, 18, MARROM);
-            DrawText("Cada cliente comeca com 15 turnos de paciencia.", 95, 575, 18, MARROM);
-            if (desenharBotao("VOLTAR", (Rectangle){ 95, 625, 210, 48 }, MARROM))
+            DrawText("COMO JOGAR", 70, 42, 42, MARROM);
+
+            DrawText("OBJETIVO", 75, 112, 22, LARANJA);
+            DrawText("Atenda os 10 clientes da fila antes que algum perca a paciencia.", 75, 143, 18, MARROM);
+            DrawText("Cada cliente comeca com 15 turnos de paciencia. Se chegar a zero, voce perde.", 75, 170, 18, MARROM);
+            DrawText("VITORIA: atender todos os 10 clientes. PONTUACAO: clientes atendidos.", 75, 197, 18, MARROM);
+
+            DrawText("INGREDIENTES E SIMBOLOS", 75, 245, 22, LARANJA);
+            DrawText("k - ketchup       m - mostarda       p - picles       a - alface", 75, 278, 18, MARROM);
+            DrawText("z - pao de cima   s - queijo suico   q - cheddar     c - cebola", 75, 307, 18, MARROM);
+            DrawText("t - tomate        n - carne          o - ovo frito    b - bacon", 75, 336, 18, MARROM);
+
+            DrawText("ACOES E TURNOS", 75, 385, 22, LARANJA);
+            DrawText("I - Preparar ingrediente: consome 1 turno.", 75, 418, 18, MARROM);
+            DrawText("A - Adicionar ingrediente ao hamburguer: consome 1 turno.", 75, 445, 18, MARROM);
+            DrawText("R - Remover ingrediente do topo: consome 1 turno.", 75, 472, 18, MARROM);
+            DrawText("E - Consultar estoque; P - consultar pedido: nao consomem turno.", 75, 499, 18, MARROM);
+
+            DrawText("REGRAS DE MONTAGEM", 75, 545, 22, LARANJA);
+            DrawText("O pao de baixo ja esta no prato. O pao de cima fecha o hamburguer.", 75, 576, 17, MARROM);
+            DrawText("Prepare antes os ingredientes que exigem preparo. Carne, ovo e bacon vencem", 75, 601, 17, MARROM);
+            DrawText("apos 3 turnos. Nao e possivel adicionar ingredientes depois do pao de cima.", 75, 625, 17, MARROM);
+
+            if (desenharBotao("VOLTAR", (Rectangle){ 1030, 650, 170, 42 }, MARROM))
                 tela = 0;
         }
         else if (tela == 2) {
             DrawText("HISTORICO", 90, 65, 42, MARROM);
-            DrawText("As partidas salvas aparecerao nesta tela.", 95, 160, 22, MARROM);
-            DrawText("A consulta e a ordenacao serao conectadas ao historico existente", 95, 198, 18, MARROM_CLARO);
-            DrawText("na proxima etapa, preservando o Quick Sort do projeto.", 95, 226, 18, MARROM_CLARO);
+            DrawText("O projeto ja carrega e salva o historico em historico.txt.", 95, 160, 21, MARROM);
+            DrawText("A visualizacao grafica e os controles de ordenacao ainda serao integrados", 95, 205, 18, MARROM_CLARO);
+            DrawText("ao Quick Sort existente no programa principal.", 95, 233, 18, MARROM_CLARO);
+            DrawText("As opcoes exigidas sao ordem alfabetica e pontuacao decrescente.", 95, 280, 18, MARROM);
             if (desenharBotao("VOLTAR", (Rectangle){ 95, 625, 210, 48 }, MARROM))
                 tela = 0;
         }
         else if (tela == 3) {
             DrawText("NOVA PARTIDA", 90, 65, 42, MARROM);
-            DrawText("A janela e o menu grafico estao funcionando.", 95, 160, 22, MARROM);
-            DrawText("A partida ainda usa o fluxo atual do jogo no terminal.", 95, 200, 19, MARROM_CLARO);
-            DrawText("A integracao das acoes com os controles graficos sera feita", 95, 240, 19, MARROM_CLARO);
-            DrawText("sem reimplementar as estruturas ou os algoritmos avaliados.", 95, 270, 19, MARROM_CLARO);
+            DrawText("A integracao da partida com os controles graficos ainda sera feita.", 95, 160, 21, MARROM);
+            DrawText("O fluxo atual de jogo e as operacoes avaliadas permanecem no programa", 95, 200, 19, MARROM_CLARO);
+            DrawText("principal. Esta tela ainda nao inicia uma partida.", 95, 230, 19, MARROM_CLARO);
             if (desenharBotao("VOLTAR", (Rectangle){ 95, 625, 210, 48 }, MARROM))
                 tela = 0;
         }
