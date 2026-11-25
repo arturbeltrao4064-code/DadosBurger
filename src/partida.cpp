@@ -153,28 +153,8 @@ bool executarPartida(Partida& p) {
 
     while (!estaVazia(p.filaClientes)) {
         limparVencidos(p);
-        interfaceAtualizar(p);
 
-        
-        
-        
-        
-        
-        
-        if (estaVazia(p.hamburguer)) 
-        const NoPilha *parte = p.hamburguer.topo;
-        while (parte != nullptr) {
-            
-            parte = parte->prox;
-        }
-        
-        
-        
-        
-        
-        
-        
-        
+        interfaceAtualizar(p);
 
         char acao;
         acao = interfaceLerAcao(p);
@@ -197,7 +177,6 @@ bool executarPartida(Partida& p) {
 
         if (acao == 'I') {
             char ingrediente;
-            
             ingrediente = interfaceLerIngrediente(p, true);
             if (ingrediente >= 'A' && ingrediente <= 'Z') ingrediente += 'a' - 'A';
 
@@ -237,7 +216,6 @@ bool executarPartida(Partida& p) {
                 continue;
             }
 
-            
             ingrediente = interfaceLerIngrediente(p, false);
             if (ingrediente >= 'A' && ingrediente <= 'Z') ingrediente += 'a' - 'A';
 
