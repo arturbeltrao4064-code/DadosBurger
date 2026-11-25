@@ -155,10 +155,12 @@ int iniciarInterface() {
         DrawRectangleRounded((Rectangle){ 800, 265, 200, 30 }, 0.3f, 10, (Color){ 231, 169, 70, 255 });
 
         if (tela == 0) {
-            if (botao("NOVO JOGO", (Rectangle){ 110, 405, 330, 58 }, LARANJA)) { opcao = 1; executando = false; }
-            if (botao("COMO JOGAR", (Rectangle){ 110, 478, 330, 58 }, MARROM)) tela = 1;
-            if (botao("HISTORICO", (Rectangle){ 110, 551, 330, 58 }, MARROM)) { opcao = 2; executando = false; }
-            if (botao("SAIR", (Rectangle){ 110, 624, 330, 48 }, MARROM_CLARO)) { opcao = 0; executando = false; }
+            DrawText("N - Novo jogo   C - Como jogar   H - Historico   ESC - Sair",
+                     110, 365, 17, MARROM_CLARO);
+            if (botao("NOVO JOGO", (Rectangle){ 110, 405, 330, 58 }, LARANJA) || IsKeyPressed(KEY_N)) { opcao = 1; executando = false; }
+            if (botao("COMO JOGAR", (Rectangle){ 110, 478, 330, 58 }, MARROM) || IsKeyPressed(KEY_C)) tela = 1;
+            if (botao("HISTORICO", (Rectangle){ 110, 551, 330, 58 }, MARROM) || IsKeyPressed(KEY_H)) { opcao = 2; executando = false; }
+            if (botao("SAIR", (Rectangle){ 110, 624, 330, 48 }, MARROM_CLARO) || IsKeyPressed(KEY_ESCAPE)) { opcao = 0; executando = false; }
         } else {
             DrawText("COMO JOGAR", 90, 390, 34, MARROM);
             DrawText("OBJETIVO: atender os 10 clientes antes que a paciencia acabe.", 90, 440, 20, MARROM);
@@ -167,7 +169,8 @@ int iniciarInterface() {
             DrawText("P - Consultar pedido (gratuito)         S - Encerrar partida", 90, 535, 18, MARROM);
             DrawText("Selecione ingredientes na tela seguinte. Prepare antes de adicionar", 90, 565, 17, MARROM_CLARO);
             DrawText("carne, ovo, bacon, queijos, cebola e tomate. O pao superior fecha o lanche.", 90, 590, 17, MARROM_CLARO);
-            if (botao("VOLTAR", (Rectangle){ 110, 630, 250, 48 }, MARROM)) tela = 0;
+            DrawText("ESC - Voltar ao menu", 390, 645, 18, MARROM_CLARO);
+            if (botao("VOLTAR", (Rectangle){ 110, 630, 250, 48 }, MARROM) || IsKeyPressed(KEY_ESCAPE)) tela = 0;
         }
         EndDrawing();
     }
@@ -238,10 +241,30 @@ char interfaceLerIngrediente(const Partida& partida, bool preparar) {
                 break;
             }
         }
+        DrawText("Teclas: K M P A Z S Q C T N O B  |  ESC - Cancelar",
+                 300, 490, 18, MARROM_CLARO);
         bool voltar = botao("CANCELAR / VOLTAR", (Rectangle){ 500, 525, 280, 48 }, VERMELHO, 18);
+        int tecla = GetKeyPressed();
+        if (tecla == KEY_K) escolhido = 'k';
+        else if (tecla == KEY_M) escolhido = 'm';
+        else if (tecla == KEY_P) escolhido = 'p';
+        else if (tecla == KEY_A) escolhido = 'a';
+        else if (tecla == KEY_Z) escolhido = 'z';
+        else if (tecla == KEY_S) escolhido = 's';
+        else if (tecla == KEY_Q) escolhido = 'q';
+        else if (tecla == KEY_C) escolhido = 'c';
+        else if (tecla == KEY_T) escolhido = 't';
+        else if (tecla == KEY_N) escolhido = 'n';
+        else if (tecla == KEY_O) escolhido = 'o';
+        else if (tecla == KEY_B) escolhido = 'b';
         bool cancelar = IsKeyPressed(KEY_ESCAPE);
         EndDrawing();
-        if (escolhido != '\0') return escolhido;
+        if (escolhido != '\0') {
+            bool permitido = !preparar || escolhido == 's' || escolhido == 'q' ||
+                             escolhido == 'c' || escolhido == 't' ||
+                             escolhido == 'n' || escolhido == 'o' || escolhido == 'b';
+            if (permitido) return escolhido;
+        }
         if (voltar || cancelar) return '\0';
     }
     return '\0';
@@ -268,9 +291,11 @@ void interfaceMostrarEstoque(const Estoque& estoque) {
         DrawText(TextFormat("Bacon: %d", estoque.pereciveis[2].tamanho), 790, 405, 22, MARROM);
         DrawText("Ketchup, mostarda, picles, alface e pao: ilimitados", 310, 465, 18, MARROM_CLARO);
         bool voltar = botao("VOLTAR A PARTIDA", (Rectangle){ 455, 565, 370, 60 }, VERDE);
+        DrawText("ENTER ou ESC - Voltar", 500, 640, 18, MARROM_CLARO);
+        bool tecladoVoltar = IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE);
         bool cancelar = IsKeyPressed(KEY_ESCAPE);
         EndDrawing();
-        if (voltar || cancelar) break;
+        if (voltar || tecladoVoltar || cancelar) break;
     }
 }
 
@@ -297,9 +322,10 @@ void interfaceMostrarPedido(const Pedido& pedido) {
         }
         DrawText("Monte os ingredientes na ordem apresentada.", 300, 465, 18, MARROM_CLARO);
         bool voltar = botao("VOLTAR A PARTIDA", (Rectangle){ 455, 565, 370, 60 }, VERDE);
-        bool cancelar = IsKeyPressed(KEY_ESCAPE);
+        DrawText("ENTER ou ESC - Voltar", 500, 640, 18, MARROM_CLARO);
+        bool tecladoVoltar = IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE);
         EndDrawing();
-        if (voltar || cancelar) break;
+        if (voltar || tecladoVoltar) break;
     }
 }
 
@@ -345,11 +371,11 @@ void interfaceMostrarResultado(const std::string& nome, int pontuacao) {
         DrawText("RESULTADO DA PARTIDA", 330, 170, 42, MARROM);
         DrawText(nome.c_str(), 430, 275, 36, LARANJA);
         DrawText(TextFormat("%d clientes atendidos", pontuacao), 420, 345, 28, MARROM);
-        if (botao("CONTINUAR", (Rectangle){ 480, 475, 320, 65 }, VERDE)) {
-            EndDrawing();
-            break;
-        }
+        DrawText("ENTER ou ESC - Continuar", 490, 565, 18, MARROM_CLARO);
+        bool continuar = botao("CONTINUAR", (Rectangle){ 480, 475, 320, 65 }, VERDE);
+        bool teclado = IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE);
         EndDrawing();
+        if (continuar || teclado) break;
     }
 }
 
@@ -364,9 +390,14 @@ int interfaceEscolherCriterioHistorico() {
             criterio = 1;
         if (botao("PONTUACAO DECRESCENTE", (Rectangle){ 350, 405, 580, 65 }, MARROM))
             criterio = 2;
+        DrawText("1 - Ordem alfabetica   2 - Pontuacao   ESC - Voltar",
+                 390, 585, 18, MARROM_CLARO);
         bool voltar = botao("VOLTAR", (Rectangle){ 500, 510, 280, 55 }, MARROM_CLARO);
+        if (IsKeyPressed(KEY_ONE) || IsKeyPressed(KEY_KP_1)) criterio = 1;
+        if (IsKeyPressed(KEY_TWO) || IsKeyPressed(KEY_KP_2)) criterio = 2;
+        bool tecladoVoltar = IsKeyPressed(KEY_ESCAPE);
         EndDrawing();
-        if (voltar) return 0;
+        if (voltar || tecladoVoltar) return 0;
         if (criterio != 0) return criterio;
         if (WindowShouldClose()) return 0;
     }
@@ -379,6 +410,8 @@ void interfaceMostrarHistorico(const PARTIDA vetor[], int quantidade, double tem
         float rolagem = GetMouseWheelMove();
         if (rolagem > 0 && inicio > 0) inicio--;
         if (rolagem < 0 && inicio + 8 < quantidade) inicio++;
+        if ((IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_PAGE_DOWN)) && inicio + 8 < quantidade) inicio++;
+        if ((IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_PAGE_UP)) && inicio > 0) inicio--;
 
         BeginDrawing();
         ClearBackground(FUNDO);
@@ -395,10 +428,12 @@ void interfaceMostrarHistorico(const PARTIDA vetor[], int quantidade, double tem
             DrawText(TextFormat("%d pontos", vetor[i].pontuacao), 900, y, 21, MARROM);
             DrawLine(80, y + 34, 1185, y + 34, (Color){ 225, 210, 190, 255 });
         }
-        DrawText("Use a roda do mouse para percorrer a lista.", 65, 635, 16, MARROM_CLARO);
+        DrawText("Setas/PageUp/PageDown - Percorrer   ESC - Voltar",
+                 65, 635, 16, MARROM_CLARO);
         bool voltar = botao("VOLTAR", (Rectangle){ 1000, 640, 190, 48 }, MARROM);
+        bool tecladoVoltar = IsKeyPressed(KEY_ESCAPE);
         EndDrawing();
-        if (voltar) break;
+        if (voltar || tecladoVoltar) break;
     }
 }
 
@@ -408,9 +443,11 @@ void interfaceAviso(const char *mensagem) {
         ClearBackground(FUNDO);
         DrawText("DADO BURGER", 430, 180, 42, MARROM);
         DrawText(mensagem, 170, 300, 22, MARROM_CLARO);
+        DrawText("ENTER ou ESC - Voltar", 500, 520, 18, MARROM_CLARO);
         bool voltar = botao("VOLTAR", (Rectangle){ 500, 430, 280, 60 }, MARROM);
+        bool tecladoVoltar = IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE);
         EndDrawing();
-        if (voltar) break;
+        if (voltar || tecladoVoltar) break;
     }
 }
 
@@ -441,8 +478,10 @@ void interfaceMostrarRelatorio(int nos, int altura, int rotacoes, int historico,
         DrawText(TextFormat("Taxa de acerto: %.2f%%", taxa), 670, 355, 19, MARROM);
         DrawText(TextFormat("Fator de carga: %.4f", fator), 670, 395, 19, MARROM);
         DrawText(TextFormat("Colisoes: %d", colisoes), 670, 435, 19, MARROM);
+        DrawText("ENTER ou ESC - Voltar ao menu", 475, 600, 18, MARROM_CLARO);
         bool continuar = botao("VOLTAR AO MENU", (Rectangle){ 470, 630, 340, 55 }, VERDE);
+        bool teclado = IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE);
         EndDrawing();
-        if (continuar) break;
+        if (continuar || teclado) break;
     }
 }
