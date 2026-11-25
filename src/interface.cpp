@@ -292,3 +292,64 @@ void interfaceMostrarResultado(const std::string& nome, int pontuacao) {
         EndDrawing();
     }
 }
+
+int interfaceEscolherCriterioHistorico() {
+    while (janelaAberta && !WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(FUNDO);
+        DrawText("HISTORICO DE PARTIDAS", 330, 150, 40, MARROM);
+        DrawText("Escolha como deseja ordenar os resultados:", 350, 235, 22, MARROM_CLARO);
+        int criterio = 0;
+        if (botao("ORDEM ALFABETICA", (Rectangle){ 350, 315, 580, 65 }, LARANJA))
+            criterio = 1;
+        if (botao("PONTUACAO DECRESCENTE", (Rectangle){ 350, 405, 580, 65 }, MARROM))
+            criterio = 2;
+        if (botao("VOLTAR", (Rectangle){ 500, 510, 280, 55 }, MARROM_CLARO))
+            criterio = 0;
+        EndDrawing();
+        if (criterio != 0) return criterio;
+        if (WindowShouldClose()) return 0;
+    }
+    return 0;
+}
+
+void interfaceMostrarHistorico(const PARTIDA vetor[], int quantidade, double tempo) {
+    int inicio = 0;
+    while (janelaAberta && !WindowShouldClose()) {
+        float rolagem = GetMouseWheelMove();
+        if (rolagem > 0 && inicio > 0) inicio--;
+        if (rolagem < 0 && inicio + 8 < quantidade) inicio++;
+
+        BeginDrawing();
+        ClearBackground(FUNDO);
+        DrawText("HISTORICO DE PARTIDAS", 55, 45, 38, MARROM);
+        DrawText(TextFormat("%d registros", quantidade), 60, 100, 18, MARROM_CLARO);
+        DrawText(TextFormat("Tempo do Quick Sort: %.8f s", tempo), 800, 100, 18, MARROM);
+        DrawRectangleRounded((Rectangle){ 55, 145, 1160, 475 }, 0.04f, 8, CREME);
+        int fim = inicio + 8;
+        if (fim > quantidade) fim = quantidade;
+        for (int i = inicio; i < fim; i++) {
+            int y = 170 + (i - inicio) * 52;
+            DrawText(TextFormat("%d.", i + 1), 85, y, 20, LARANJA);
+            DrawText(vetor[i].nome_jogador.c_str(), 145, y, 21, MARROM);
+            DrawText(TextFormat("%d pontos", vetor[i].pontuacao), 900, y, 21, MARROM);
+            DrawLine(80, y + 34, 1185, y + 34, (Color){ 225, 210, 190, 255 });
+        }
+        DrawText("Use a roda do mouse para percorrer a lista.", 65, 635, 16, MARROM_CLARO);
+        bool voltar = botao("VOLTAR", (Rectangle){ 1000, 640, 190, 48 }, MARROM);
+        EndDrawing();
+        if (voltar) break;
+    }
+}
+
+void interfaceAviso(const char *mensagem) {
+    while (janelaAberta && !WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(FUNDO);
+        DrawText("DADO BURGER", 430, 180, 42, MARROM);
+        DrawText(mensagem, 170, 300, 22, MARROM_CLARO);
+        bool voltar = botao("VOLTAR", (Rectangle){ 500, 430, 280, 60 }, MARROM);
+        EndDrawing();
+        if (voltar) break;
+    }
+}
