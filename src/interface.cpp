@@ -38,12 +38,13 @@ static void desenharHamburguer(int x, int y) {
     DrawEllipse(x + 52, y - 30, 4, 2, CREME);
 }
 
-void iniciarInterface() {
+int iniciarInterface() {
     InitWindow(1280, 720, "Dado Burger");
     SetTargetFPS(60);
 
     int tela = 0;
     bool executando = true;
+    int opcaoSelecionada = 0;
 
     while (!WindowShouldClose() && executando) {
         BeginDrawing();
@@ -60,14 +61,20 @@ void iniciarInterface() {
 
             desenharHamburguer(900, 205);
 
-            if (desenharBotao("NOVO JOGO", (Rectangle){ 110, 405, 330, 58 }, LARANJA))
-                tela = 3;
+            if (desenharBotao("NOVO JOGO", (Rectangle){ 110, 405, 330, 58 }, LARANJA)) {
+                opcaoSelecionada = 1;
+                executando = false;
+            }
             if (desenharBotao("COMO JOGAR", (Rectangle){ 110, 478, 330, 58 }, MARROM))
                 tela = 1;
-            if (desenharBotao("HISTORICO", (Rectangle){ 110, 551, 330, 58 }, MARROM))
-                tela = 2;
-            if (desenharBotao("SAIR", (Rectangle){ 110, 624, 330, 48 }, MARROM_CLARO))
+            if (desenharBotao("HISTORICO", (Rectangle){ 110, 551, 330, 58 }, MARROM)) {
+                opcaoSelecionada = 2;
                 executando = false;
+            }
+            if (desenharBotao("SAIR", (Rectangle){ 110, 624, 330, 48 }, MARROM_CLARO)) {
+                opcaoSelecionada = 0;
+                executando = false;
+            }
 
             DrawText("DADO BURGER", 930, 640, 18, MARROM_CLARO);
         }
@@ -98,26 +105,10 @@ void iniciarInterface() {
             if (desenharBotao("VOLTAR", (Rectangle){ 1030, 650, 170, 42 }, MARROM))
                 tela = 0;
         }
-        else if (tela == 2) {
-            DrawText("HISTORICO", 90, 65, 42, MARROM);
-            DrawText("O projeto ja carrega e salva o historico em historico.txt.", 95, 160, 21, MARROM);
-            DrawText("A visualizacao grafica e os controles de ordenacao ainda serao integrados", 95, 205, 18, MARROM_CLARO);
-            DrawText("ao Quick Sort existente no programa principal.", 95, 233, 18, MARROM_CLARO);
-            DrawText("As opcoes exigidas sao ordem alfabetica e pontuacao decrescente.", 95, 280, 18, MARROM);
-            if (desenharBotao("VOLTAR", (Rectangle){ 95, 625, 210, 48 }, MARROM))
-                tela = 0;
-        }
-        else if (tela == 3) {
-            DrawText("NOVA PARTIDA", 90, 65, 42, MARROM);
-            DrawText("A integracao da partida com os controles graficos ainda sera feita.", 95, 160, 21, MARROM);
-            DrawText("O fluxo atual de jogo e as operacoes avaliadas permanecem no programa", 95, 200, 19, MARROM_CLARO);
-            DrawText("principal. Esta tela ainda nao inicia uma partida.", 95, 230, 19, MARROM_CLARO);
-            if (desenharBotao("VOLTAR", (Rectangle){ 95, 625, 210, 48 }, MARROM))
-                tela = 0;
-        }
 
         EndDrawing();
     }
 
     CloseWindow();
+    return opcaoSelecionada;
 }
