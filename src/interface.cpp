@@ -201,7 +201,6 @@ char interfaceLerAcao(const Partida& partida) {
         if (botao("PEDIDO", (Rectangle){ 775, 680, 170, 34 }, MARROM_CLARO)) { EndDrawing(); return 'P'; }
         if (botao("SAIR", (Rectangle){ 955, 680, 170, 34 }, VERMELHO)) { EndDrawing(); return 'S'; }
         EndDrawing();
-        PollInputEvents();
     }
     return 'S';
 }
@@ -219,14 +218,15 @@ char interfaceLerIngrediente(const Partida& partida, bool preparar) {
             int linha = i / 3;
             Rectangle area = { 285.0f + coluna * 235.0f, 205.0f + linha * 78.0f, 210, 55 };
             if (botao(TextFormat("%c - %s", (char)(codigos[i] - 32), nomeIngrediente(codigos[i])),
-                      area, (Color){ 112, 70, 40, 255 }, 17))
+                      area, (Color){ 112, 70, 40, 255 }, 17)) {
+                EndDrawing();
                 return codigos[i];
+            }
         }
-        if (IsKeyPressed(KEY_ESCAPE)) return ' ';
+        if (IsKeyPressed(KEY_ESCAPE)) return '\\0';
         EndDrawing();
-        PollInputEvents();
     }
-    return ' ';
+    return '\\0';
 }
 
 void interfaceMensagem(const char *mensagem) {
