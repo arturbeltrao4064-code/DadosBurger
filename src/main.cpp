@@ -104,22 +104,11 @@ static void escreverRelatorio(const NoAVL *raiz, int historicoCarregado) {
         taxa = 100.0 * totalHits / (totalHits + totalMisses);
 
     std::ofstream log("medicoes.log", std::ios::app);
-    std::cout << "\n========== RELATORIO DE DESEMPENHO ==========\n";
-    std::cout << "Nos inseridos na AVL: " << totalNosInseridos << "\n";
-    std::cout << "Altura da AVL: " << altura << "\n";
-    std::cout << "Rotacoes na insercao: " << totalrotacoes << "\n";
-    std::cout << "Entradas carregadas no historico: " << historicoCarregado << "\n";
-    std::cout << "Buscas na AVL: " << totalBuscas << "\n";
-    std::cout << "Comparacoes nas buscas AVL: " << totalComparacoesBusca << "\n";
-    std::cout << "Media de comparacoes por busca: " << media << "\n";
-    std::cout << "Tempo total das buscas AVL: " << tempoTotalBuscas << " segundos\n";
-    std::cout << "Hash - tamanho da tabela: 101\n";
-    std::cout << "Hash - entradas ocupadas: " << totalEntradasCache << "\n";
-    std::cout << "Hash - hits: " << totalHits << ", misses: " << totalMisses << "\n";
-    std::cout << "Hash - taxa de acerto: " << taxa << "%\n";
-    std::cout << "Hash - fator de carga: " << (totalHits + totalMisses > 0 ? (double)totalEntradasCache / 101.0 : 0.0) << "\n";
-    std::cout << "Hash - colisoes: " << totalColisoes << "\n";
-
+    interfaceMostrarRelatorio(totalNosInseridos, altura, totalrotacoes, historicoCarregado,
+                              totalBuscas, totalComparacoesBusca, media, tempoTotalBuscas,
+                              totalEntradasCache, totalHits, totalMisses, taxa,
+                              (totalHits + totalMisses > 0 ? (double)totalEntradasCache / 101.0 : 0.0),
+                              totalColisoes);
     if (log.is_open()) {
         log << "RELATORIO DE DESEMPENHO\n";
         log << "Nos inseridos na AVL: " << totalNosInseridos << "\n";
@@ -222,7 +211,6 @@ int main(int argc, char *argv[]) {
             resultado.nome_jogador = interfaceLerNome();
             resultado.pontuacao = partida.pontuacao;
             interfaceMostrarResultado(resultado.nome_jogador, resultado.pontuacao);
-            interfaceFecharJogo();
 
             if (salvarHistorico(argv[2], resultado) &&
                 inserir(historico, resultado, historico.tamanho)) {
@@ -232,6 +220,7 @@ int main(int argc, char *argv[]) {
             }
 
             escreverRelatorio(raiz, historicoInicial);
+            interfaceFecharJogo();
 
             Pedido removido;
             while (desenfileira(partida.filaClientes, removido)) {
