@@ -6,7 +6,6 @@ static const Color MARROM = {  70,  40,  20, 255 };
 static const Color MARROM_CLARO = { 112,  70,  40, 255 };
 static const Color LARANJA = { 202, 112,  50, 255 };
 static const Color CREME = { 255, 247, 229, 255 };
-static const Color VERDE = { 105, 137,  80, 255 };
 
 static bool desenharBotao(const char *texto, Rectangle area, Color cor) {
     Vector2 mouse = GetMousePosition();
@@ -25,7 +24,7 @@ static bool desenharBotao(const char *texto, Rectangle area, Color cor) {
 static void desenharHamburguer(int x, int y) {
     DrawEllipse(x, y + 68, 105, 16, Fade(MARROM, 0.18f));
     DrawRectangleRounded((Rectangle){ (float)x - 100, (float)y + 28, 200, 32 },
-                         0.35f, 12, (Color){ 111,  sixty,  30, 255 });
+                         0.35f, 12, (Color){ 111,  60,  30, 255 });
     DrawRectangleRounded((Rectangle){ (float)x - 94, (float)y + 10, 188, 24 },
                          0.35f, 12, (Color){ 231, 169,  70, 255 });
     DrawRectangleRounded((Rectangle){ (float)x - 96, (float)y - 5, 192, 22 },
