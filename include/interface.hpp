@@ -22,9 +22,10 @@ int interfaceEscolherCriterioHistorico();
 void interfaceMostrarHistorico(const PARTIDA vetor[], int quantidade, double tempo);
 void interfaceAviso(const char *mensagem);
 
-#endif
-
 void interfaceMostrarRelatorio(int nos, int altura, int rotacoes, int historico,
                                int buscas, int comparacoes, double media,
                                double tempoBuscas, int entradas, int hits,
                                int misses, double taxa, double fator, int colisoes);
+
+#endif
+
