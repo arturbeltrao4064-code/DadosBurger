@@ -61,24 +61,16 @@ static void registrarOrdenacao(const std::string& nome, int quantidade, double t
 
 static void mostrarHistorico(const ListaContDin& historico) {
     if (historico.tamanho == 0) {
-        std::cout << "Historico vazio.\n";
+        interfaceAviso("Historico vazio.");
         return;
     }
 
-    std::cout << "[1] Ordem alfabetica\n";
-    std::cout << "[2] Pontuacao decrescente\n";
-    std::cout << "Ordenar por: ";
-    int criterio;
-    std::cin >> criterio;
-
-    if (criterio != 1 && criterio != 2) {
-        std::cout << "Opcao invalida.\n";
-        return;
-    }
+    int criterio = interfaceEscolherCriterioHistorico();
+    if (criterio == 0) return;
 
     PARTIDA *copia = new PARTIDA[historico.tamanho];
     if (copia == nullptr) {
-        std::cout << "Nao foi possivel criar copia do historico.\n";
+        interfaceAviso("Nao foi possivel criar copia do historico.");
         return;
     }
 
@@ -91,18 +83,13 @@ static void mostrarHistorico(const ListaContDin& historico) {
     quickSort(copia, 0, historico.tamanho - 1, criterio);
     double tempo = timer_parar(&timer);
 
-    std::cout << "\n========== HISTORICO =========\n";
-    for (i = 0; i < historico.tamanho; i++) {
-        std::cout << i + 1 << ". " << copia[i].nome_jogador
-                  << " - " << copia[i].pontuacao << " pontos\n";
-    }
+    interfaceMostrarHistorico(copia, historico.tamanho, tempo);
 
     if (criterio == 1)
         registrarOrdenacao("Quick Sort alfabetico", historico.tamanho, tempo);
     else
         registrarOrdenacao("Quick Sort por pontuacao", historico.tamanho, tempo);
 
-    std::cout << "Tempo do Quick Sort: " << tempo << " segundos\n";
     delete[] copia;
 }
 
