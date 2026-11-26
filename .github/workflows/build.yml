@@ -26,7 +26,21 @@ jobs:
           git clone --depth 1 --branch 6.0 https://github.com/raysan5/raylib.git "$RUNNER_TEMP/raylib"
           make -C "$RUNNER_TEMP/raylib/src" PLATFORM=PLATFORM_DESKTOP
           sudo make -C "$RUNNER_TEMP/raylib/src" install
+          sudo mkdir -p /usr/local/lib/pkgconfig
+          sudo tee /usr/local/lib/pkgconfig/raylib.pc > /dev/null <<'EOF'
+          prefix=/usr/local
+          exec_prefix=${prefix}
+          libdir=${exec_prefix}/lib
+          includedir=${prefix}/include
+
+          Name: raylib
+          Description: Raylib graphics library
+          Version: 6.0
+          Libs: -L${libdir} -lraylib
+          Cflags: -I${includedir}
+          EOF
           sudo ldconfig
+          pkg-config --modversion raylib
 
       - name: Configurar CMake
         run: cmake -S . -B build
