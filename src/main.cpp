@@ -4,11 +4,13 @@
 #include <limits>
 #include <cstdlib>
 #include <ctime>
+#include <cstdio>
 #include "avl.hpp"
 #include "historico.hpp"
 #include "arquivos.hpp"
 #include "partida.hpp"
 #include "timer.hpp"
+#include "interface.hpp"
 
 static int maiorCodigo(const NoAVL *no) {
     if (no == nullptr) return 0;
@@ -60,24 +62,16 @@ static void registrarOrdenacao(const std::string& nome, int quantidade, double t
 
 static void mostrarHistorico(const ListaContDin& historico) {
     if (historico.tamanho == 0) {
-        std::cout << "Historico vazio.\n";
+        interfaceAviso("Historico vazio.");
         return;
     }
 
-    std::cout << "[1] Ordem alfabetica\n";
-    std::cout << "[2] Pontuacao decrescente\n";
-    std::cout << "Ordenar por: ";
-    int criterio;
-    std::cin >> criterio;
-
-    if (criterio != 1 && criterio != 2) {
-        std::cout << "Opcao invalida.\n";
-        return;
-    }
+    int criterio = interfaceEscolherCriterioHistorico();
+    if (criterio == 0) return;
 
     PARTIDA *copia = new PARTIDA[historico.tamanho];
     if (copia == nullptr) {
-        std::cout << "Nao foi possivel criar copia do historico.\n";
+        interfaceAviso("Nao foi possivel criar copia do historico.");
         return;
     }
 
@@ -90,34 +84,14 @@ static void mostrarHistorico(const ListaContDin& historico) {
     quickSort(copia, 0, historico.tamanho - 1, criterio);
     double tempo = timer_parar(&timer);
 
-    std::cout << "\n========== HISTORICO =========\n";
-    for (i = 0; i < historico.tamanho; i++) {
-        std::cout << i + 1 << ". " << copia[i].nome_jogador
-                  << " - " << copia[i].pontuacao << " pontos\n";
-    }
+    interfaceMostrarHistorico(copia, historico.tamanho, tempo);
 
     if (criterio == 1)
         registrarOrdenacao("Quick Sort alfabetico", historico.tamanho, tempo);
     else
         registrarOrdenacao("Quick Sort por pontuacao", historico.tamanho, tempo);
 
-    std::cout << "Tempo do Quick Sort: " << tempo << " segundos\n";
     delete[] copia;
-}
-
-static void mostrarComoJogar() {
-    std::cout << "\n========== COMO JOGAR ==========\n";
-    std::cout << "Objetivo: atender todos os clientes antes que percam a paciencia.\n";
-    std::cout << "Cada cliente comeca com 15 turnos de paciencia. A partida tem 10 clientes.\n";
-    std::cout << "I prepara, A adiciona e R remove ingrediente; cada acao consome 1 turno.\n";
-    std::cout << "E consulta o estoque e P consulta o pedido; essas consultas nao consomem turno.\n";
-    std::cout << "Ingredientes: k ketchup, m mostarda, p picles, a alface, z pao de cima,\n";
-    std::cout << "s queijo suico, q cheddar, c cebola, t tomate, n carne, o ovo e b bacon.\n";
-    std::cout << "Prepare os ingredientes que precisam de preparo antes de adiciona-los.\n";
-    std::cout << "O pao de baixo ja esta no prato e nao faz parte da receita.\n";
-    std::cout << "O pao de cima fecha o hamburguer; depois dele nao se adiciona mais nada.\n";
-    std::cout << "Carne, ovo e bacon vencem apos 3 turnos; o que vence primeiro sai primeiro.\n";
-    std::cout << "Vitoria: atender todos os clientes. Derrota: paciencia chegar a zero.\n";
 }
 
 static void escreverRelatorio(const NoAVL *raiz, int historicoCarregado) {
@@ -131,22 +105,11 @@ static void escreverRelatorio(const NoAVL *raiz, int historicoCarregado) {
         taxa = 100.0 * totalHits / (totalHits + totalMisses);
 
     std::ofstream log("medicoes.log", std::ios::app);
-    std::cout << "\n========== RELATORIO DE DESEMPENHO ==========\n";
-    std::cout << "Nos inseridos na AVL: " << totalNosInseridos << "\n";
-    std::cout << "Altura da AVL: " << altura << "\n";
-    std::cout << "Rotacoes na insercao: " << totalrotacoes << "\n";
-    std::cout << "Entradas carregadas no historico: " << historicoCarregado << "\n";
-    std::cout << "Buscas na AVL: " << totalBuscas << "\n";
-    std::cout << "Comparacoes nas buscas AVL: " << totalComparacoesBusca << "\n";
-    std::cout << "Media de comparacoes por busca: " << media << "\n";
-    std::cout << "Tempo total das buscas AVL: " << tempoTotalBuscas << " segundos\n";
-    std::cout << "Hash - tamanho da tabela: 101\n";
-    std::cout << "Hash - entradas ocupadas: " << totalEntradasCache << "\n";
-    std::cout << "Hash - hits: " << totalHits << ", misses: " << totalMisses << "\n";
-    std::cout << "Hash - taxa de acerto: " << taxa << "%\n";
-    std::cout << "Hash - fator de carga: " << (totalHits + totalMisses > 0 ? (double)totalEntradasCache / 101.0 : 0.0) << "\n";
-    std::cout << "Hash - colisoes: " << totalColisoes << "\n";
-
+    interfaceMostrarRelatorio(totalNosInseridos, altura, totalrotacoes, historicoCarregado,
+                              totalBuscas, totalComparacoesBusca, media, tempoTotalBuscas,
+                              totalEntradasCache, totalHits, totalMisses, taxa,
+                              (totalHits + totalMisses > 0 ? (double)totalEntradasCache / 101.0 : 0.0),
+                              totalColisoes);
     if (log.is_open()) {
         log << "RELATORIO DE DESEMPENHO\n";
         log << "Nos inseridos na AVL: " << totalNosInseridos << "\n";
@@ -228,23 +191,12 @@ int main(int argc, char *argv[]) {
     int historicoInicial = historico.tamanho;
 
     int opcao = -1;
+    const char *arquivoSalvo = "partida_salva.txt";
     while (opcao != 0) {
-        std::cout << "\n========== DADO BURGER ==========\n";
-        std::cout << "[1] Novo jogo\n";
-        std::cout << "[2] Como jogar\n";
-        std::cout << "[3] Historico\n";
-        std::cout << "[0] Sair\n";
-        std::cout << "Escolha: ";
-
-        if (!(std::cin >> opcao)) {
-            std::cin.clear();
-            std::cin.ignore(10000, '\n');
-            opcao = -1;
-            std::cout << "Digite uma opcao valida.\n";
-            continue;
-        }
+        opcao = iniciarInterface();
 
         if (opcao == 1) {
+            std::remove(arquivoSalvo);
             totalComparacoesBusca = 0;
             totalBuscas = 0;
             tempoTotalBuscas = 0.0;
@@ -255,26 +207,41 @@ int main(int argc, char *argv[]) {
 
             Partida partida = {};
             inicializarPartida(partida, raiz, maiorCodigo(raiz));
-            executarPartida(partida);
+            interfaceAbrirJogo();
+            bool salvar = false;
+            executarPartida(partida, salvar);
 
-            std::cin.ignore(10000, '\n');
-            std::cout << "Nome do jogador: ";
+            if (salvar) {
+                if (salvarPartida(partida, arquivoSalvo))
+                    interfaceAviso("Partida salva. Voce pode continuar pelo menu.");
+                else
+                    interfaceAviso("Nao foi possivel salvar a partida.");
+                interfaceFecharJogo();
+                Pedido removido;
+                while (desenfileira(partida.filaClientes, removido)) destruir(removido.receita);
+                Ingrediente ingrediente;
+                while (desempilha(partida.hamburguer, ingrediente)) {}
+                for (int i = 0; i < 3; i++) destruirHeap(partida.e.pereciveis[i]);
+                encDestruir(partida.cache);
+                continue;
+            }
+
+            std::remove(arquivoSalvo);
+
             PARTIDA resultado;
-            std::getline(std::cin, resultado.nome_jogador);
-            if (resultado.nome_jogador.empty())
-                resultado.nome_jogador = "Jogador";
-            if (resultado.nome_jogador.size() > 20)
-                resultado.nome_jogador = resultado.nome_jogador.substr(0, 20);
+            resultado.nome_jogador = interfaceLerNome();
             resultado.pontuacao = partida.pontuacao;
+            interfaceMostrarResultado(resultado.nome_jogador, resultado.pontuacao);
 
             if (salvarHistorico(argv[2], resultado) &&
                 inserir(historico, resultado, historico.tamanho)) {
-                std::cout << "Resultado salvo no historico.\n";
+                interfaceAviso("Resultado salvo no historico.");
             } else {
-                std::cout << "Nao foi possivel registrar o resultado.\n";
+                interfaceAviso("Nao foi possivel registrar o resultado.");
             }
 
             escreverRelatorio(raiz, historicoInicial);
+            interfaceFecharJogo();
 
             Pedido removido;
             while (desenfileira(partida.filaClientes, removido)) {
@@ -286,18 +253,50 @@ int main(int argc, char *argv[]) {
             encDestruir(partida.cache);
         }
         else if (opcao == 2) {
-            mostrarComoJogar();
-        }
-        else if (opcao == 3) {
             mostrarHistorico(historico);
         }
+        else if (opcao == 3) {
+            Partida partida = {};
+            if (!carregarPartida(partida, arquivoSalvo)) {
+                interfaceAviso("Nao existe partida salva ou o arquivo esta invalido.");
+                continue;
+            }
+            interfaceAbrirJogo();
+            bool salvar = false;
+            executarPartida(partida, salvar);
+            if (salvar) {
+                if (salvarPartida(partida, arquivoSalvo))
+                    interfaceAviso("Partida salva novamente.");
+                else
+                    interfaceAviso("Nao foi possivel salvar a partida.");
+            } else {
+                std::remove(arquivoSalvo);
+                PARTIDA resultado;
+                resultado.nome_jogador = interfaceLerNome();
+                resultado.pontuacao = partida.pontuacao;
+                interfaceMostrarResultado(resultado.nome_jogador, resultado.pontuacao);
+                if (salvarHistorico(argv[2], resultado) &&
+                    inserir(historico, resultado, historico.tamanho))
+                    interfaceAviso("Resultado salvo no historico.");
+                else
+                    interfaceAviso("Nao foi possivel registrar o resultado.");
+                escreverRelatorio(raiz, historicoInicial);
+            }
+            interfaceFecharJogo();
+            Pedido removido;
+            while (desenfileira(partida.filaClientes, removido)) destruir(removido.receita);
+            Ingrediente ingrediente;
+            while (desempilha(partida.hamburguer, ingrediente)) {}
+            for (int i = 0; i < 3; i++) destruirHeap(partida.e.pereciveis[i]);
+            encDestruir(partida.cache);
+        }
         else if (opcao != 0) {
-            std::cout << "Opcao invalida.\n";
+            interfaceAviso("Opcao invalida.");
         }
     }
 
     destruir(historico);
     DestruirAVL(raiz);
-    std::cout << "Programa encerrado.\n";
+
     return 0;
 }

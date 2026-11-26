@@ -1,8 +1,12 @@
 #include "partida.hpp"
 #include "receita.hpp"
 #include "timer.hpp"
+#include "interface.hpp"
 #include <iostream>
 #include <cstdlib>
+#include <fstream>
+#include <iomanip>
+#include <cstdio>
 
 double tempoTotalBuscas = 0.0;
 
@@ -147,36 +151,23 @@ void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId) {
     }
 }
 
-bool executarPartida(Partida& p) {
+bool executarPartida(Partida& p, bool& salvar) {
     bool finalizada = false;
+    salvar = false;
 
     while (!estaVazia(p.filaClientes)) {
         limparVencidos(p);
 
-        std::cout << "\n========== DADO BURGER ==========\n";
-        std::cout << "Turno: " << p.turnoAtual << "\n";
-        std::cout << "Pontuacao: " << p.pontuacao << "\n";
-        std::cout << "Pedido: " << p.filaClientes.frente->dado.nome << "\n";
-        std::cout << "Paciencia restante: " << p.pacienciaAtual << "\n";
-        std::cout << "Hamburguer (topo para base): ";
-        if (estaVazia(p.hamburguer)) std::cout << "(vazio)";
-        const NoPilha *parte = p.hamburguer.topo;
-        while (parte != nullptr) {
-            std::cout << parte->dado.comida << " ";
-            parte = parte->prox;
-        }
-        std::cout << "\n";
-        std::cout << "[I] Preparar ingrediente\n";
-        std::cout << "[A] Adicionar ingrediente\n";
-        std::cout << "[R] Remover ingrediente do topo\n";
-        std::cout << "[E] Consultar estoque (nao consome turno)\n";
-        std::cout << "[P] Consultar pedido (nao consome turno)\n";
-        std::cout << "[S] Encerrar partida\n";
-        std::cout << "Acao: ";
+        interfaceAtualizar(p);
 
         char acao;
-        std::cin >> acao;
+        acao = interfaceLerAcao(p);
         if (acao >= 'a' && acao <= 'z') acao = acao - 'a' + 'A';
+
+        if (acao == 'G') {
+            salvar = true;
+            break;
+        }
 
         if (acao == 'S') {
             finalizada = true;
@@ -184,20 +175,18 @@ bool executarPartida(Partida& p) {
         }
 
         if (acao == 'E') {
-            printaEstoque(p.e);
+            interfaceMostrarEstoque(p.e);
             continue;
         }
 
         if (acao == 'P') {
-            std::cout << "Codigo: " << p.filaClientes.frente->dado.cod << "\n";
-            std::cout << "Receita: " << p.filaClientes.frente->dado.nome << "\n";
+            interfaceMostrarPedido(p.filaClientes.frente->dado);
             continue;
         }
 
         if (acao == 'I') {
             char ingrediente;
-            std::cout << "Preparar [S] suico [Q] cheddar [C] cebola [T] tomate [N] carne [O] ovo [B] bacon: ";
-            std::cin >> ingrediente;
+            ingrediente = interfaceLerIngrediente(p, true);
             if (ingrediente >= 'A' && ingrediente <= 'Z') ingrediente += 'a' - 'A';
 
             if (ingrediente == 's') p.e.queijo_suico.qnt++;
@@ -213,14 +202,15 @@ bool executarPartida(Partida& p) {
                 novo.turno_validade = 0;
                 novo.qnt = 1;
                 if (!inserir(p.e.pereciveis[indice], novo, p.turnoAtual)) {
-                    std::cout << "Nao foi possivel preparar: estoque cheio.\n";
+                    interfaceMensagem("Estoque cheio: nao foi possivel preparar.");
                     continue;
                 }
             } else {
-                std::cout << "Ingrediente invalido.\n";
+                
                 continue;
             }
-            std::cout << "Ingrediente preparado.\n";
+            
+            interfaceMensagem("Ingrediente preparado.");
             avancarTurno(p);
         }
         else if (acao == 'A') {
@@ -232,12 +222,11 @@ bool executarPartida(Partida& p) {
 
             if (!estaVazia(p.hamburguer) &&
                 p.hamburguer.topo->dado.comida == 'z') {
-                std::cout << "O pao de cima ja foi colocado. Remova-o antes de continuar.\n";
+                interfaceMensagem("O pao superior ja foi colocado. Remova-o primeiro.");
                 continue;
             }
 
-            std::cout << "Adicionar [K] ketchup [M] mostarda [P] picles [A] alface [Z] pao [S] suico [Q] cheddar [C] cebola [T] tomate [N] carne [O] ovo [B] bacon: ";
-            std::cin >> ingrediente;
+            ingrediente = interfaceLerIngrediente(p, false);
             if (ingrediente >= 'A' && ingrediente <= 'Z') ingrediente += 'a' - 'A';
 
             bool disponivel = true;
@@ -269,12 +258,12 @@ bool executarPartida(Partida& p) {
             else disponivel = false;
 
             if (!disponivel) {
-                std::cout << "Ingrediente invalido ou sem estoque.\n";
+                interfaceMensagem("Ingrediente invalido ou sem estoque.");
                 continue;
             }
 
             if (!empilha(p.hamburguer, novo)) {
-                std::cout << "Falha ao adicionar ingrediente.\n";
+                interfaceMensagem("Nao foi possivel adicionar o ingrediente.");
                 continue;
             }
 
@@ -283,6 +272,7 @@ bool executarPartida(Partida& p) {
             if (ingrediente == 'c') p.e.cebola.qnt--;
             if (ingrediente == 't') p.e.tomate.qnt--;
 
+            interfaceMensagem("Ingrediente adicionado ao hamburguer.");
             avancarTurno(p);
 
             if (ingrediente == 'z') {
@@ -293,37 +283,186 @@ bool executarPartida(Partida& p) {
                     p.pontuacao++;
                     limparHamburguer(p.hamburguer);
                     p.pacienciaAtual = 15;
-                    std::cout << "Pedido correto! Cliente atendido.\n";
+                    interfaceMensagem("Pedido correto! Cliente atendido.");
+                    
                     if (estaVazia(p.filaClientes)) {
-                        std::cout << "VITORIA! Todos os clientes foram atendidos.\n";
+                        
                         finalizada = true;
                         break;
                     }
                 } else {
-                    std::cout << "Receita incorreta. Remova ingredientes ou o pao e tente novamente.\n";
+                    interfaceMensagem("Receita incorreta. Remova ingredientes e tente novamente.");
                 }
             }
         }
         else if (acao == 'R') {
             Ingrediente removido;
             if (!desempilha(p.hamburguer, removido)) {
-                std::cout << "O hamburguer esta vazio.\n";
+                interfaceMensagem("O hamburguer esta vazio.");
                 continue;
             }
-            std::cout << "Ingrediente removido: " << removido.comida << "\n";
+            
+            interfaceMensagem("Ingrediente removido do topo.");
             avancarTurno(p);
         }
         else {
-            std::cout << "Opcao invalida.\n";
+            
             continue;
         }
 
         if (p.pacienciaAtual <= 0) {
-            std::cout << "O cliente perdeu a paciencia. Fim de jogo.\n";
+            
             finalizada = true;
             break;
         }
     }
 
     return finalizada;
+}
+
+
+static void escreverReceita(std::ostream& arquivo, const ListaReceita& receita) {
+    std::string texto;
+    const NoReceita *item = receita.ini;
+    while (item != nullptr) {
+        texto += item->ingrediente;
+        item = item->prox;
+    }
+    arquivo << std::quoted(texto) << '\n';
+}
+
+bool salvarPartida(const Partida& p, const char *caminho) {
+    std::ofstream arq(caminho);
+    if (!arq.is_open()) return false;
+
+    arq << "DADOBURGER 1\n";
+    arq << p.id << ' ' << p.turnoAtual << ' ' << p.pontuacao << ' '
+        << p.pacienciaAtual << '\n';
+
+    arq << tamanho(p.filaClientes) << '\n';
+    const NoFila *cliente = p.filaClientes.frente;
+    while (cliente != nullptr) {
+        arq << cliente->dado.cod << ' ' << std::quoted(cliente->dado.nome) << ' ';
+        escreverReceita(arq, cliente->dado.receita);
+        cliente = cliente->prox;
+    }
+
+    int qtdPilha = tamanho(p.hamburguer);
+    arq << qtdPilha << '\n';
+    const NoPilha *parte = p.hamburguer.topo;
+    while (parte != nullptr) {
+        arq << parte->dado.comida << ' ' << parte->dado.turno_validade
+            << ' ' << parte->dado.qnt << '\n';
+        parte = parte->prox;
+    }
+
+    const Ingrediente simples[4] = {
+        p.e.queijo_suico, p.e.cheddar, p.e.cebola, p.e.tomate
+    };
+    for (int i = 0; i < 4; i++)
+        arq << simples[i].comida << ' ' << simples[i].turno_validade
+            << ' ' << simples[i].qnt << '\n';
+
+    for (int i = 0; i < 3; i++) {
+        const heap& h = p.e.pereciveis[i];
+        arq << h.comida << ' ' << h.validade_config << ' ' << h.tamanho << '\n';
+        for (int j = 0; j < h.tamanho; j++)
+            arq << h.vetor[j].comida << ' ' << h.vetor[j].turno_validade
+                << ' ' << h.vetor[j].qnt << '\n';
+    }
+
+    arq << totalBuscas << ' ' << totalComparacoesBusca << ' '
+        << tempoTotalBuscas << ' ' << totalHits << ' ' << totalMisses << ' '
+        << totalColisoes << ' ' << totalEntradasCache << '\n';
+    arq.close();
+    return arq.good();
+}
+
+bool carregarPartida(Partida& p, const char *caminho) {
+    std::ifstream arq(caminho);
+    if (!arq.is_open()) return false;
+
+    std::string marca;
+    int versao;
+    if (!(arq >> marca >> versao) || marca != "DADOBURGER" || versao != 1)
+        return false;
+
+    Partida nova = {};
+    inicializa(nova.filaClientes);
+    inicializa(nova.hamburguer);
+
+    if (!(arq >> nova.id >> nova.turnoAtual >> nova.pontuacao
+              >> nova.pacienciaAtual)) return false;
+
+    int clientes;
+    if (!(arq >> clientes) || clientes < 1 || clientes > CLIENTES) return false;
+    for (int i = 0; i < clientes; i++) {
+        Pedido pedido;
+        std::string receita;
+        if (!(arq >> pedido.cod >> std::quoted(pedido.nome)
+                  >> std::quoted(receita))) return false;
+        inicializar(pedido.receita);
+        bool ok = true;
+        for (int j = 0; j < (int)receita.size(); j++)
+            if (!inserirFim(pedido.receita, receita[j])) { ok = false; break; }
+        if (!ok || !enfileira(nova.filaClientes, pedido)) {
+            destruir(pedido.receita);
+            return false;
+        }
+    }
+
+    int qtdPilha;
+    if (!(arq >> qtdPilha) || qtdPilha < 0 || qtdPilha > 10000) return false;
+    Ingrediente itens[10000];
+    for (int i = 0; i < qtdPilha; i++)
+        if (!(arq >> itens[i].comida >> itens[i].turno_validade >> itens[i].qnt))
+            return false;
+    for (int i = qtdPilha - 1; i >= 0; i--)
+        if (!empilha(nova.hamburguer, itens[i])) return false;
+
+    Ingrediente *simples[4] = {
+        &nova.e.queijo_suico, &nova.e.cheddar, &nova.e.cebola, &nova.e.tomate
+    };
+    for (int i = 0; i < 4; i++)
+        if (!(arq >> simples[i]->comida >> simples[i]->turno_validade
+                  >> simples[i]->qnt)) return false;
+
+    const char codigos[3] = {'n', 'o', 'b'};
+    for (int i = 0; i < 3; i++) {
+        char comida;
+        int validade, quantidade;
+        if (!(arq >> comida >> validade >> quantidade) ||
+            quantidade < 0 || quantidade > 1000) return false;
+        inicializarHeap(nova.e.pereciveis[i], codigos[i], 1000, validade);
+        if (nova.e.pereciveis[i].vetor == nullptr) return false;
+        if (comida != codigos[i]) return false;
+        nova.e.pereciveis[i].tamanho = quantidade;
+        for (int j = 0; j < quantidade; j++)
+            if (!(arq >> nova.e.pereciveis[i].vetor[j].comida
+                      >> nova.e.pereciveis[i].vetor[j].turno_validade
+                      >> nova.e.pereciveis[i].vetor[j].qnt)) return false;
+        buildHeap(nova.e.pereciveis[i]);
+    }
+
+    int buscas, comparacoes, hits, misses, colisoes, entradas;
+    double tempo;
+    if (!(arq >> buscas >> comparacoes >> tempo >> hits >> misses
+              >> colisoes >> entradas)) return false;
+
+    encInicializar(nova.cache, 101);
+    const NoFila *c = nova.filaClientes.frente;
+    while (c != nullptr) {
+        encInserirReceita(nova.cache, c->dado.cod, c->dado.nome);
+        c = c->prox;
+    }
+    totalBuscas = buscas;
+    totalComparacoesBusca = comparacoes;
+    tempoTotalBuscas = tempo;
+    totalHits = hits;
+    totalMisses = misses;
+    totalColisoes = colisoes;
+    totalEntradasCache = entradas;
+
+    p = nova;
+    return true;
 }
