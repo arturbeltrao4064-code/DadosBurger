@@ -1,16 +1,21 @@
 
 #include "pereciveis.hpp"
-#include <new>
 
-void inicializarHeap(heap &a, char comida, int capacidade,
-                     int validadeConfig)
+void inicializarHeap(heap &a, char comida, int capacidade, int validadeConfig)
 {
     a.comida = comida;
     a.tamanho = 0;
-    a.capacidade = capacidade > 0 ? capacidade : 1;
+    if (capacidade > 0)
+    {
+        a.capacidade = capacidade;
+    }
+    else
+    {
+        a.capacidade = 1;
+    }
     a.validade_config = validadeConfig;
 
-    a.vetor = new (std::nothrow) Ingrediente[a.capacidade];
+    a.vetor = new Ingrediente[a.capacidade];
 
     if (a.vetor == nullptr)
         a.capacidade = 0;
@@ -89,7 +94,6 @@ bool inserir(heap &a, const Ingrediente &novo, int turnoAtual)
 
     return true;
 }
-
 
 Ingrediente remover_min(heap &a)
 {

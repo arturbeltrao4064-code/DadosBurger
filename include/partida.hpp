@@ -4,10 +4,8 @@
 #define CLIENTES 10
 #include "fila.hpp"
 #include "montagem.hpp"
-#include "pereciveis.hpp"
 #include "cache.hpp"
 #include "avl.hpp"
-#include <cstdlib>
 
 struct Partida {
     int id;
@@ -24,5 +22,6 @@ extern double tempoTotalBuscas;
 
 void inicializarPartida(Partida& p, const NoAVL* pedidos, int maiorId);
 bool executarPartida(Partida& p);
+int compararPartidas(const PARTIDA &a, const PARTIDA &b, int criterio);
 
 #endif

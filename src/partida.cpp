@@ -1,29 +1,13 @@
 #include "partida.hpp"
 #include "receita.hpp"
 #include "timer.hpp"
+#include "montagem.hpp"
 #include <iostream>
 #include <cstdlib>
 
 double tempoTotalBuscas = 0.0;
 
-static int menorCodigo(const NoAVL *no) {
-    if (no == nullptr) return 0;
-    while (no->esq != nullptr) no = no->esq;
-    return no->prod.cod;
-}
-
-static int maiorCodigo(const NoAVL *no) {
-    if (no == nullptr) return 0;
-    while (no->dir != nullptr) no = no->dir;
-    return no->prod.cod;
-}
-
-static void limparHamburguer(PilhaEnc& pilha) {
-    Ingrediente removido;
-    while (desempilha(pilha, removido)) {}
-}
-
-static void limparVencidos(Partida& p) {
+void limparVencidos(Partida& p) {
     int i;
     for (i = 0; i < 3; i++) {
         while (!estaVazio(p.e.pereciveis[i]) &&
@@ -33,12 +17,12 @@ static void limparVencidos(Partida& p) {
     }
 }
 
-static void avancarTurno(Partida& p) {
+void avancarTurno(Partida& p) {
     p.pacienciaAtual--;
     p.turnoAtual++;
 }
 
-static bool receitaCorreta(const ListaReceita& receita, const PilhaEnc& pilha) {
+bool receitaCorreta(const ListaReceita& receita, const PilhaEnc& pilha) {
     PilhaEnc auxiliar;
     inicializa(auxiliar);
 

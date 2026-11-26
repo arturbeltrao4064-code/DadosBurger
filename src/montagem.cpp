@@ -1,17 +1,18 @@
-
-#include <new>
 #include <iostream>
 #include "montagem.hpp"
 
-void inicializa(PilhaEnc& p) {
+void inicializa(PilhaEnc &p)
+{
     p.topo = nullptr;
 }
 
-bool estaVazia(const PilhaEnc& p) {
+bool estaVazia(const PilhaEnc &p)
+{
     return p.topo == nullptr;
 }
 
-bool empilha(PilhaEnc& p, const Ingrediente& valor) {
+bool empilha(PilhaEnc &p, const Ingrediente &valor)
+{
     NoPilha *novo = new NoPilha;
 
     if (novo == nullptr)
@@ -25,7 +26,8 @@ bool empilha(PilhaEnc& p, const Ingrediente& valor) {
     return true;
 }
 
-bool desempilha(PilhaEnc& p, Ingrediente& valorRemovido) {
+bool desempilha(PilhaEnc &p, Ingrediente &valorRemovido)
+{
     if (estaVazia(p))
         return false;
 
@@ -39,7 +41,8 @@ bool desempilha(PilhaEnc& p, Ingrediente& valorRemovido) {
     return true;
 }
 
-bool topo(const PilhaEnc& p, Ingrediente& valor) {
+bool topo(const PilhaEnc &p, Ingrediente &valor)
+{
     if (estaVazia(p))
         return false;
 
@@ -48,11 +51,13 @@ bool topo(const PilhaEnc& p, Ingrediente& valor) {
     return true;
 }
 
-int tamanho(const PilhaEnc& p) {
+int tamanho(const PilhaEnc &p)
+{
     const NoPilha *aux = p.topo;
     int contador = 0;
 
-    while (aux != nullptr) {
+    while (aux != nullptr)
+    {
         contador++;
         aux = aux->prox;
     }
@@ -60,7 +65,8 @@ int tamanho(const PilhaEnc& p) {
     return contador;
 }
 
-void printaEstoque(Estoque& e) {
+void printaEstoque(Estoque &e)
+{
     std::cout << "Estoque atual:\n";
     std::cout << "Ketchup: infinito\n";
     std::cout << "Mostarda: infinito\n";
@@ -74,4 +80,12 @@ void printaEstoque(Estoque& e) {
     std::cout << "Carne: " << e.pereciveis[0].tamanho << '\n';
     std::cout << "Ovo frito: " << e.pereciveis[1].tamanho << '\n';
     std::cout << "Bacon: " << e.pereciveis[2].tamanho << '\n';
+}
+
+void limparHamburguer(PilhaEnc &pilha)
+{
+    Ingrediente removido;
+    while (desempilha(pilha, removido))
+    {
+    }
 }

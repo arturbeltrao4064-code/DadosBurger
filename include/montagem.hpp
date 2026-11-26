@@ -27,6 +27,7 @@ bool empilha(PilhaEnc& p, const Ingrediente& valor);
 bool desempilha(PilhaEnc& p, Ingrediente& valorRemovido);
 bool topo(const PilhaEnc& p, Ingrediente& valor);
 int tamanho(const PilhaEnc& p);
+void limparHamburguer(PilhaEnc& pilha);
 
 void printaEstoque(Estoque& e);
 #endif

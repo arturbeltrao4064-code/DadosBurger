@@ -29,6 +29,9 @@ NoAVL* Balancear(NoAVL *no);
 NoAVL* Inserir(NoAVL *no, Pedido p);
 const NoAVL* Buscar(const NoAVL *no, int codigo);
 void DestruirAVL(NoAVL *no);
+int menorCodigo(const NoAVL *no);
+int maiorCodigo(const NoAVL *no);
+
 
 extern int totalrotacoes;
 extern int totalNosInseridos;

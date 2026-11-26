@@ -1,18 +1,19 @@
-
-#include <new>
 #include "fila.hpp"
 
-void inicializa(FilaEnc& f) {
+void inicializa(FilaEnc &f)
+{
     f.frente = nullptr;
     f.final = nullptr;
 }
 
-bool estaVazia(const FilaEnc& f) {
+bool estaVazia(const FilaEnc &f)
+{
     return f.frente == nullptr;
 }
 
-bool enfileira(FilaEnc& f, const Pedido& valor) {
-    NoFila *novo = new (std::nothrow) NoFila;
+bool enfileira(FilaEnc &f, const Pedido &valor)
+{
+    NoFila *novo = new NoFila;
     if (novo == nullptr)
         return false;
 
@@ -28,7 +29,8 @@ bool enfileira(FilaEnc& f, const Pedido& valor) {
     return true;
 }
 
-bool desenfileira(FilaEnc& f, Pedido& valorRemovido) {
+bool desenfileira(FilaEnc &f, Pedido &valorRemovido)
+{
     if (estaVazia(f))
         return false;
 
@@ -43,11 +45,13 @@ bool desenfileira(FilaEnc& f, Pedido& valorRemovido) {
     return true;
 }
 
-int tamanho(const FilaEnc& f) {
+int tamanho(const FilaEnc &f)
+{
     const NoFila *aux = f.frente;
     int contador = 0;
 
-    while (aux != nullptr) {
+    while (aux != nullptr)
+    {
         contador++;
         aux = aux->prox;
     }
