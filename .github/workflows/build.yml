@@ -1,24 +1,58 @@
-name: Build and tests
+name: Build and report metrics
 
 on:
   push:
     branches:
       - implementaçaofinal
+      - relatorio-metricas
   pull_request:
     branches:
       - main
 
 jobs:
-  build:
+  build-and-measure:
     runs-on: ubuntu-latest
     steps:
       - name: Baixar codigo
         uses: actions/checkout@v4
+
+      - name: Instalar dependencias da Raylib
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake pkg-config git libasound2-dev libx11-dev libxrandr-dev libxi-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev
+
+      - name: Compilar e instalar Raylib 6.0
+        run: |
+          git clone --depth 1 --branch 6.0 https://github.com/raysan5/raylib.git "$RUNNER_TEMP/raylib"
+          make -C "$RUNNER_TEMP/raylib/src" PLATFORM=PLATFORM_DESKTOP
+          sudo make -C "$RUNNER_TEMP/raylib/src" install
+          sudo ldconfig
+
       - name: Configurar CMake
         run: cmake -S . -B build
-      - name: Compilar
+
+      - name: Compilar aplicacao grafica
         run: cmake --build build --parallel 2
-      - name: Testar uma partida completa
-        run: bash tests/smoke.sh
-      - name: Testar carregamento dos arquivos de desenvolvimento
-        run: printf '0\n' | ./build/dado_burger dados/pedidos.txt dados/historico.txt > /dev/null
+
+      - name: Compilar simulador de partida e metricas
+        run: |
+          g++ -std=c++17 -O2 -Wall -Wextra -Wpedantic -Iinclude \
+            tests/metrics.cpp src/partida.cpp src/avl.cpp src/cache.cpp \
+            src/fila.cpp src/montagem.cpp src/pereciveis.cpp \
+            src/receita.cpp src/timer.cpp src/arquivos.cpp \
+            -o build/metrics
+
+      - name: Executar simulacao com os pedidos finais
+        run: |
+          mkdir -p output
+          ./build/metrics dados/pedidos.txt output/medicoes.log
+          cat output/medicoes.log >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publicar medicoes.log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: medicoes-dado-burger
+          path: output/medicoes.log
+          if-no-files-found: warn
+          retention-days: 7
