@@ -53,7 +53,7 @@ jobs:
           g++ -std=c++17 -O2 -Wall -Wextra -Wpedantic -Iinclude \
             tests/metrics.cpp src/partida.cpp src/avl.cpp src/cache.cpp \
             src/fila.cpp src/montagem.cpp src/pereciveis.cpp \
-            src/receita.cpp src/timer.cpp src/arquivos.cpp \
+            src/receita.cpp src/timer.cpp src/arquivos.cpp src/historico.cpp \
             -o build/metrics
 
       - name: Executar simulacao com os pedidos finais
