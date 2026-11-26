@@ -56,10 +56,10 @@ jobs:
             src/receita.cpp src/timer.cpp src/arquivos.cpp src/historico.cpp \
             -o build/metrics
 
-      - name: Executar simulacao com os pedidos finais
+      - name: Executar simulacao com pedidos e historico de desenvolvimento
         run: |
           mkdir -p output
-          ./build/metrics dados/pedidos.txt output/medicoes.log
+          ./build/metrics dados/pedidos.txt dados/historico.txt output/medicoes.log
           cat output/medicoes.log >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publicar medicoes.log
