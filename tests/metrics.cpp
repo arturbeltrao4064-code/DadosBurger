@@ -5,6 +5,7 @@
 #include "timer.hpp"
 
 #include <cstdio>
+#include <cmath>
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
