@@ -5,8 +5,8 @@
 #include "timer.hpp"
 
 #include <cstdio>
-#include <cmath>
 #include <cstdlib>
+#include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -93,7 +93,7 @@ static int compararPartidas(const PARTIDA& a, const PARTIDA& b) {
     return 0;
 }
 
-// Mesma implementacao de Quick Sort recursivo e pivô central usada em main.cpp.
+// Mesma implementacao de Quick Sort recursivo e pivo central usada em main.cpp.
 static void quickSort(PARTIDA vetor[], int inicio, int fim) {
     int i = inicio;
     int j = fim;
@@ -116,28 +116,16 @@ static void quickSort(PARTIDA vetor[], int inicio, int fim) {
     if (i < fim) quickSort(vetor, i, fim);
 }
 
-static std::string nomeJogador(int numero) {
-    std::string numeroTexto = std::to_string(numero);
-    while (numeroTexto.size() < 8) numeroTexto = "0" + numeroTexto;
-    return "Jogador_" + numeroTexto;
-}
-
-static double medirQuickSort(int quantidade) {
-    PARTIDA *original = new PARTIDA[quantidade];
+// Usa registros reais do historico de desenvolvimento. A copia e refeita
+// antes de cada repeticao e fica fora do intervalo cronometrado.
+static double medirQuickSort(const PARTIDA dados[], int quantidade) {
     PARTIDA *copia = new PARTIDA[quantidade];
-
-    for (int i = 0; i < quantidade; i++) {
-        int chave = (i * 7919 + 104729) % quantidade;
-        original[i].nome_jogador = nomeJogador(chave);
-        original[i].pontuacao = (chave * 37 + 17) % 10000;
-    }
-
     const int repeticoes = 31;
     double tempos[repeticoes];
 
     for (int r = 0; r < repeticoes; r++) {
         for (int i = 0; i < quantidade; i++)
-            copia[i] = original[i];
+            copia[i] = dados[i];
 
         Timer cronometro;
         timer_iniciar(&cronometro);
@@ -147,7 +135,6 @@ static double medirQuickSort(int quantidade) {
         for (int i = 1; i < quantidade; i++) {
             if (copia[i - 1].nome_jogador > copia[i].nome_jogador) {
                 std::cerr << "Erro: Quick Sort produziu ordem incorreta.\n";
-                delete[] original;
                 delete[] copia;
                 return -1.0;
             }
@@ -166,20 +153,19 @@ static double medirQuickSort(int quantidade) {
     }
 
     double mediana = tempos[repeticoes / 2];
-    delete[] original;
     delete[] copia;
     return mediana;
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        std::cerr << "Uso: metrics pedidos.txt medicoes.log\n";
+    if (argc != 4) {
+        std::cerr << "Uso: metrics pedidos.txt historico.txt medicoes.log\n";
         return 1;
     }
 
     std::srand(20261126);
 
-    std::ofstream log(argv[2]);
+    std::ofstream log(argv[3]);
     if (!log.is_open()) {
         std::cerr << "Nao foi possivel criar o arquivo de medicoes.\n";
         return 1;
@@ -199,7 +185,21 @@ int main(int argc, char *argv[]) {
     const int nos = totalNosInseridos;
     const int altura = AlturaNodo(raiz) + 1;
     const int rotacoes = totalrotacoes;
-    const int limiteTeorico = (int)(1.44 * (std::log2((double)nos)));
+    const int limiteTeorico = (int)(1.44 * std::log2((double)nos));
+
+    ListaContDin historico;
+    inicializar(historico);
+    std::ifstream arquivoHistorico(argv[2]);
+    if (!arquivoHistorico.is_open() ||
+        !carregarHistorico(arquivoHistorico, historico) ||
+        historico.tamanho < 10000) {
+        std::cerr << "Nao foi possivel carregar pelo menos 10.000 registros de historico.\n";
+        arquivoHistorico.close();
+        destruir(historico);
+        DestruirAVL(raiz);
+        return 1;
+    }
+    arquivoHistorico.close();
 
     // Cria uma partida real e verifica tambem o mecanismo extra de salvar/carregar.
     Partida inicial = {};
@@ -208,6 +208,7 @@ int main(int argc, char *argv[]) {
         !salvarPartida(inicial, "output/partida_teste.txt")) {
         std::cerr << "Falha ao preparar ou salvar a partida de teste.\n";
         limparPartida(inicial);
+        destruir(historico);
         DestruirAVL(raiz);
         return 1;
     }
@@ -218,6 +219,7 @@ int main(int argc, char *argv[]) {
         std::cerr << "Falha ao carregar a partida salva.\n";
         limparPartida(inicial);
         limparPartida(partida);
+        destruir(historico);
         DestruirAVL(raiz);
         return 1;
     }
@@ -235,6 +237,7 @@ int main(int argc, char *argv[]) {
         std::cerr << "A simulacao nao conseguiu atender todos os clientes. Pontos: "
                   << partida.pontuacao << "\n";
         limparPartida(partida);
+        destruir(historico);
         DestruirAVL(raiz);
         return 1;
     }
@@ -253,8 +256,9 @@ int main(int argc, char *argv[]) {
     const double tempoBuscas = tempoTotalBuscas;
 
     log << std::fixed << std::setprecision(9);
-    log << "MEDICOES AUTOMATIZADAS - VERSAO FINAL\n";
+    log << "MEDICOES AUTOMATIZADAS - VERSAO DE DESENVOLVIMENTO\n";
     log << "Arquivo de pedidos: " << argv[1] << "\n";
+    log << "Arquivo de historico: " << argv[2] << "\n";
     log << "Semente aleatoria: 20261126\n";
     log << "Clientes atendidos na simulacao: " << partida.pontuacao << "\n\n";
     log << "AVL - nos inseridos: " << nos << "\n";
@@ -279,19 +283,22 @@ int main(int argc, char *argv[]) {
     DestruirAVL(raiz);
 
     const int tamanhos[] = {1000, 5000, 10000};
-    log << "ORDENACAO DO HISTORICO - QUICK SORT ALFABETICO\n";
-    log << "Amostras sinteticas; 31 repeticoes por tamanho; mediana dos tempos.\n";
+    log << "ORDENACAO DO HISTORICO DE DESENVOLVIMENTO - QUICK SORT ALFABETICO\n";
+    log << "Registros reais de " << argv[2]
+        << "; 31 repeticoes por tamanho; mediana dos tempos.\n";
     for (int i = 0; i < 3; i++) {
-        double tempo = medirQuickSort(tamanhos[i]);
+        double tempo = medirQuickSort(historico.historico, tamanhos[i]);
         if (tempo < 0.0) {
             log.close();
+            destruir(historico);
             return 1;
         }
         log << tamanhos[i] << " registros: " << tempo << " segundos\n";
     }
 
+    destruir(historico);
     log.close();
     std::cout << "Simulacao concluida: " << CLIENTES
-              << " clientes atendidos. Medicoes em " << argv[2] << "\n";
+              << " clientes atendidos. Medicoes em " << argv[3] << "\n";
     return 0;
 }
